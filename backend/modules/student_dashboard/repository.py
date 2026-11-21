@@ -1,56 +1,79 @@
-"""Consultas parametrizadas del panel del estudiante."""
-
-from uuid import UUID
+"""Consultas exclusivas del catalogo academico oficial de Neon."""
 
 import psycopg
 from psycopg.rows import dict_row
 
 
-def list_subjects(url: str, profile_id: UUID) -> list[dict[str, object]]:
+# Una misma conexion para materias y tareas: evita viajes adicionales a Neon.
+def load_dashboard(
+    url: str, user_id: int, selected_slug: str | None
+) -> tuple[list, dict | None, list]:
     with (
         psycopg.connect(url, connect_timeout=5, row_factory=dict_row) as connection,
         connection.cursor() as cursor,
     ):
         cursor.execute("SET LOCAL statement_timeout = '5s'")
         cursor.execute(
-            """SELECT subject.id, subject.slug, subject.name, subject.icon_name
-                   FROM student_demo_subjects AS subject
-                   JOIN student_demo_subject_enrollments AS enrollment
-                     ON enrollment.subject_id = subject.id
-                   WHERE enrollment.profile_id = %s AND subject.is_active
-                   ORDER BY subject.sort_order, subject.name""",
-            (profile_id,),
+            """SELECT DISTINCT m.id, 'materia-' || m.id AS slug,
+                      m.nombre AS name, 'book-open' AS icon_name
+               FROM public.ll_user_estudiante AS link
+               JOIN public.inscritos AS ins ON ins.id_estudiante = link.estudiante_id
+               JOIN public.clase_paralelo AS clase
+                 ON clase.curso = ins.curso
+                AND clase.paralelo = ins.paralelo
+                AND clase.gestion = ins.gestion
+               JOIN public.matera AS m ON m.id = clase.id_materia
+               WHERE link.user_id = %s
+               ORDER BY name, m.id""",
+            (user_id,),
         )
-        return cursor.fetchall()
-
-
-def list_tasks(url: str, profile_id: UUID, subject_id: UUID) -> list[dict[str, object]]:
-    with (
-        psycopg.connect(url, connect_timeout=5, row_factory=dict_row) as connection,
-        connection.cursor() as cursor,
-    ):
-        cursor.execute("SET LOCAL statement_timeout = '5s'")
+        subjects = cursor.fetchall()
+        selected = next((s for s in subjects if s["slug"] == selected_slug), None)
+        if selected is None and subjects:
+            selected = subjects[0]
+        if not selected:
+            return subjects, None, []
         cursor.execute(
-            """SELECT task.id, task.title
-                   FROM student_demo_tasks AS task
-                   JOIN student_demo_task_assignments AS assignment ON assignment.task_id = task.id
-                   WHERE assignment.profile_id = %s
-                     AND task.subject_id = %s
-                     AND task.is_published
-                   ORDER BY task.created_at, task.title""",
-            (profile_id, subject_id),
+            """SELECT DISTINCT t.id,
+                      COALESCE(NULLIF(btrim(t.titulo), ''), 'Tarea sin titulo') AS title
+               FROM public.ll_user_estudiante AS link
+               JOIN public.inscritos AS ins ON ins.id_estudiante = link.estudiante_id
+               JOIN public.clase_paralelo AS clase
+                 ON clase.curso = ins.curso
+                AND clase.paralelo = ins.paralelo
+                AND clase.gestion = ins.gestion
+               JOIN public.tarea AS t
+                 ON t.id_docente = clase.id_docente
+                AND t.id_materia = clase.id_materia
+                AND t.gestion = clase.gestion
+                AND t.curso = clase.curso
+                AND t.paralelo = clase.paralelo
+               WHERE link.user_id = %s AND clase.id_materia = %s
+               ORDER BY t.id""",
+            (user_id, selected["id"]),
         )
-        return cursor.fetchall()
+        tasks = cursor.fetchall()
+        return subjects, selected, tasks
 
 
-def task_is_available(url: str, profile_id: UUID, task_id: UUID) -> bool:
+def task_is_available(url: str, user_id: int, task_id: int) -> bool:
     with psycopg.connect(url, connect_timeout=5) as connection, connection.cursor() as cursor:
         cursor.execute("SET LOCAL statement_timeout = '5s'")
         cursor.execute(
             """SELECT 1
-               FROM student_demo_tasks AS task
-               JOIN student_demo_task_assignments AS assignment ON assignment.task_id = task.id
-               WHERE assignment.profile_id = %s AND task.id = %s AND task.is_published""",
-            (profile_id, task_id),
+               FROM public.ll_user_estudiante AS link
+               JOIN public.inscritos AS ins ON ins.id_estudiante = link.estudiante_id
+               JOIN public.clase_paralelo AS clase
+                 ON clase.curso = ins.curso
+                AND clase.paralelo = ins.paralelo
+                AND clase.gestion = ins.gestion
+               JOIN public.tarea AS t
+                 ON t.id_docente = clase.id_docente
+                AND t.id_materia = clase.id_materia
+                AND t.gestion = clase.gestion
+                AND t.curso = clase.curso
+                AND t.paralelo = clase.paralelo
+               WHERE link.user_id = %s AND t.id = %s LIMIT 1""",
+            (user_id, task_id),
         )
         return cursor.fetchone() is not None

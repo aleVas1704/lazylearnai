@@ -1,5 +1,6 @@
-"""HTTP del acceso. Formulario URL-encoded estándar sin dependencia multipart."""
+"""HTTP de acceso a partir de las cuentas ya existentes en public.usuario."""
 
+import os
 from urllib.parse import parse_qs
 
 from fastapi import APIRouter, Request
@@ -14,7 +15,7 @@ from backend.modules.student_access.http import (
     secure_cookie,
 )
 
-router = APIRouter(tags=["Acceso de demostración"])
+router = APIRouter(tags=["Acceso de estudiante"])
 
 
 def login_page(
@@ -23,7 +24,6 @@ def login_page(
     errors: dict[str, str] | None = None,
     message: str | None = None,
 ) -> HTMLResponse:
-    # No volver a incluir nombre, carnet, HMAC ni token en el HTML.
     return request.app.state.templates.TemplateResponse(
         request=request,
         name="pages/student_login.html",
@@ -40,7 +40,6 @@ def student_login(request: Request) -> HTMLResponse:
 
 @router.post("/student/access", response_class=HTMLResponse)
 async def student_access(request: Request) -> Response:
-    # Evitar envíos de formularios desde otro sitio (incluidos ataques de login CSRF).
     if not request_is_same_origin(request):
         return login_page(
             request, 403, message="Abre el formulario desde este sitio e inténtalo otra vez."
@@ -58,27 +57,32 @@ async def student_access(request: Request) -> Response:
         fields = parse_qs(
             body.decode("utf-8"), keep_blank_values=True, max_num_fields=2, errors="strict"
         )
-        if set(fields) - {"name", "identity_number"} or any(len(v) != 1 for v in fields.values()):
+        if set(fields) - {"name", "password"} or any(len(v) != 1 for v in fields.values()):
             raise ValueError()
     except (ValueError, UnicodeError):
         return login_page(
             request, 400, message="No se pudo leer el formulario. Inténtalo otra vez."
         )
+
+    # SOLO demo local: modo heredado deshabilitado por defecto, nunca en Vercel/HTTPS.
+    local_dev = (
+        not secure_cookie(request) and os.environ.get("STUDENT_ALLOW_LEGACY_PLAINTEXT") == "1"
+    )
     try:
         token = await run_in_threadpool(
             service.create_access,
             fields.get("name", [""])[0],
-            fields.get("identity_number", [""])[0],
+            fields.get("password", [""])[0],
             request.cookies.get(COOKIE_NAME),
+            allow_legacy_plaintext=local_dev,
         )
     except service.InvalidFields as exc:
         return login_page(request, 422, errors=exc.errors)
     except service.AccessRejected:
-        return login_page(
-            request, 400, message="No se pudo completar el acceso con esos datos ficticios."
-        )
+        return login_page(request, 400, message="Usuario o contraseña incorrectos.")
     except service.AccessUnavailable:
         return login_page(request, 503, message=service.UNAVAILABLE)
+
     response = RedirectResponse("/student/dashboard", status_code=303, headers=PRIVATE_HEADERS)
     response.set_cookie(
         COOKIE_NAME,

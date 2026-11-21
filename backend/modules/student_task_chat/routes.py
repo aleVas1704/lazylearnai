@@ -24,8 +24,8 @@ def _login_redirect() -> RedirectResponse:
 
 async def _workspace_page(
     request: Request,
-    profile_id: UUID,
-    task_id: UUID,
+    user_id: int,
+    task_id: int,
     *,
     status_code: int = 200,
     error: str | None = None,
@@ -33,7 +33,7 @@ async def _workspace_page(
     request_id: UUID | None = None,
 ) -> Response:
     try:
-        workspace = await run_in_threadpool(service.load_workspace, profile_id, task_id)
+        workspace = await run_in_threadpool(service.load_workspace, user_id, task_id)
     except service.TaskNotFound:
         return Response("Tarea no disponible.", status_code=404, headers=PRIVATE_HEADERS)
     except service.WorkspaceUnavailable:
@@ -61,7 +61,7 @@ async def _workspace_page(
 
 
 @router.post("/student/tasks/{task_id}/start")
-async def start_task(request: Request, task_id: UUID) -> Response:
+async def start_task(request: Request, task_id: int) -> Response:
     if not request_is_same_origin(request):
         return Response(status_code=403, headers=PRIVATE_HEADERS)
     try:
@@ -73,7 +73,7 @@ async def start_task(request: Request, task_id: UUID) -> Response:
     if session is None:
         return _login_redirect()
     try:
-        await run_in_threadpool(service.start_task, session.profile_id, task_id)
+        await run_in_threadpool(service.start_task, session.user_id, task_id)
     except service.TaskNotFound:
         return Response("Tarea no disponible.", status_code=404, headers=PRIVATE_HEADERS)
     except service.WorkspaceUnavailable:
@@ -83,16 +83,16 @@ async def start_task(request: Request, task_id: UUID) -> Response:
     except service.AiUnavailable:
         return await _workspace_page(
             request,
-            session.profile_id,
+            session.user_id,
             task_id,
-            status_code=503,
-            error="El tutor no pudo responder ahora. Puedes reintentar sin perder la tarea.",
+            status_code=200,
+            error="El tutor no pudo iniciar la explicacion. Comprueba GEMINI_API_KEY y reintenta.",
         )
     return RedirectResponse(f"/student/tasks/{task_id}", status_code=303, headers=PRIVATE_HEADERS)
 
 
 @router.get("/student/tasks/{task_id}", response_class=HTMLResponse)
-async def task_workspace(request: Request, task_id: UUID) -> Response:
+async def task_workspace(request: Request, task_id: int) -> Response:
     try:
         session = await _session(request)
     except access_service.AccessUnavailable:
@@ -101,11 +101,11 @@ async def task_workspace(request: Request, task_id: UUID) -> Response:
         )
     if session is None:
         return _login_redirect()
-    return await _workspace_page(request, session.profile_id, task_id)
+    return await _workspace_page(request, session.user_id, task_id)
 
 
 @router.post("/student/tasks/{task_id}/messages", response_class=HTMLResponse)
-async def send_message(request: Request, task_id: UUID) -> Response:
+async def send_message(request: Request, task_id: int) -> Response:
     if not request_is_same_origin(request):
         return Response(status_code=403, headers=PRIVATE_HEADERS)
     if request.headers.get("content-type", "").split(";")[0].strip().lower() != (
@@ -138,7 +138,7 @@ async def send_message(request: Request, task_id: UUID) -> Response:
     try:
         await run_in_threadpool(
             service.ask_question,
-            session.profile_id,
+            session.user_id,
             task_id,
             request_id,
             message,
@@ -146,7 +146,7 @@ async def send_message(request: Request, task_id: UUID) -> Response:
     except service.InvalidQuestion:
         return await _workspace_page(
             request,
-            session.profile_id,
+            session.user_id,
             task_id,
             status_code=422,
             error=f"Escribe una pregunta de hasta {service.MAX_MESSAGE_LENGTH} caracteres.",
@@ -156,7 +156,7 @@ async def send_message(request: Request, task_id: UUID) -> Response:
     except service.RateLimited:
         return await _workspace_page(
             request,
-            session.profile_id,
+            session.user_id,
             task_id,
             status_code=429,
             error="Has enviado varias preguntas. Espera unos minutos antes de continuar.",
@@ -166,7 +166,7 @@ async def send_message(request: Request, task_id: UUID) -> Response:
     except service.AiUnavailable:
         return await _workspace_page(
             request,
-            session.profile_id,
+            session.user_id,
             task_id,
             status_code=503,
             error="El tutor no pudo responder ahora. Reintenta para continuar sin duplicar tu pregunta.",

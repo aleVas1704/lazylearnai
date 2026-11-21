@@ -1,18 +1,18 @@
 {% extends "student_access_base.html" %}
 {% block access_content %}
-<form class="ll-card access-card" action="/student/access" method="post" aria-label="Acceso de demostración" novalidate>
+<form class="ll-card access-card" action="/student/access" method="post" aria-label="Acceso del estudiante" novalidate>
   {% if message %}<p class="access-error access-alert" role="alert">{{ message }}</p>{% endif %}
   <div class="access-field">
-    <label for="student-name"><span class="ll-icon ll-icon--user-round" aria-hidden="true"></span>Nombre</label>
-    <input id="student-name" name="name" type="text" autocomplete="name" maxlength="160" required
+    <label for="student-name"><span class="ll-icon ll-icon--user-round" aria-hidden="true"></span>Nombre de usuario</label>
+    <input id="student-name" name="name" type="text" autocomplete="username" maxlength="80" required
       {% if errors.name %}aria-invalid="true" aria-describedby="name-error" autofocus{% endif %}>
     {% if errors.name %}<p id="name-error" class="access-error" role="alert">{{ errors.name }}</p>{% endif %}
   </div>
   <div class="access-field">
-    <label for="student-identity"><span class="ll-icon access-id-icon" aria-hidden="true"></span>Carnet de identidad</label>
-    <input id="student-identity" name="identity_number" type="text" inputmode="numeric" autocomplete="off" maxlength="32" required
-      {% if errors.identity_number %}aria-invalid="true" aria-describedby="identity-error" {% if not errors.name %}autofocus{% endif %}{% endif %}>
-    {% if errors.identity_number %}<p id="identity-error" class="access-error" role="alert">{{ errors.identity_number }}</p>{% endif %}
+    <label for="student-password"><span class="ll-icon ll-icon--lock-keyhole" aria-hidden="true"></span>Contraseña</label>
+    <input id="student-password" name="password" type="password" autocomplete="current-password" maxlength="256" required
+      {% if errors.password %}aria-invalid="true" aria-describedby="password-error" {% if not errors.name %}autofocus{% endif %}{% endif %}>
+    {% if errors.password %}<p id="password-error" class="access-error" role="alert">{{ errors.password }}</p>{% endif %}
   </div>
   <div class="access-button-frame">
     <button class="ll-button access-submit" type="submit"><span class="access-play" aria-hidden="true"></span>Entrar</button>

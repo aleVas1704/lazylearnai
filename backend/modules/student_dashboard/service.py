@@ -1,7 +1,6 @@
-"""Reglas del panel: solo materias inscritas y tareas publicadas/asignadas."""
+"""Panel academico utilizando solamente el catalogo oficial."""
 
 from dataclasses import dataclass
-from uuid import UUID
 
 import psycopg
 
@@ -22,16 +21,12 @@ class DashboardData:
     tasks: list[dict[str, object]]
 
 
-def load_dashboard(profile_id: UUID, selected_slug: str | None) -> DashboardData:
+def load_dashboard(user_id: int, selected_slug: str | None) -> DashboardData:
     url = database_url()
     if not url:
         raise DashboardUnavailable()
     try:
-        subjects = repository.list_subjects(url, profile_id)
-        selected = next((item for item in subjects if item["slug"] == selected_slug), None)
-        if selected is None and subjects:
-            selected = subjects[0]
-        tasks = repository.list_tasks(url, profile_id, selected["id"]) if selected else []
+        subjects, selected, tasks = repository.load_dashboard(url, user_id, selected_slug)
     except psycopg.Error:
         raise DashboardUnavailable() from None
     for item in subjects:
@@ -40,11 +35,11 @@ def load_dashboard(profile_id: UUID, selected_slug: str | None) -> DashboardData
     return DashboardData(subjects, selected, tasks)
 
 
-def task_is_available(profile_id: UUID, task_id: UUID) -> bool:
+def task_is_available(user_id: int, task_id: int) -> bool:
     url = database_url()
     if not url:
         raise DashboardUnavailable()
     try:
-        return repository.task_is_available(url, profile_id, task_id)
+        return repository.task_is_available(url, user_id, task_id)
     except psycopg.Error:
         raise DashboardUnavailable() from None

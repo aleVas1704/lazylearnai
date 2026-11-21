@@ -46,9 +46,9 @@ def _url() -> str:
     return url
 
 
-def load_workspace(profile_id: UUID, task_id: UUID) -> Workspace:
+def load_workspace(user_id: int, task_id: int) -> Workspace:
     try:
-        data = repository.load_workspace(_url(), profile_id, task_id)
+        data = repository.load_workspace(_url(), user_id, task_id)
     except psycopg.Error:
         raise WorkspaceUnavailable() from None
     if data is None:
@@ -60,10 +60,10 @@ def _content(role: str, text: str) -> types.Content:
     return types.Content(role=role, parts=[types.Part.from_text(text=text)])
 
 
-def start_task(profile_id: UUID, task_id: UUID) -> None:
+def start_task(user_id: int, task_id: int) -> None:
     url = _url()
     try:
-        claim = repository.claim_initial(url, profile_id, task_id)
+        claim = repository.claim_initial(url, user_id, task_id)
     except psycopg.Error:
         raise WorkspaceUnavailable() from None
     if claim is None:
@@ -86,8 +86,8 @@ def start_task(profile_id: UUID, task_id: UUID) -> None:
 
 
 def ask_question(
-    profile_id: UUID,
-    task_id: UUID,
+    user_id: int,
+    task_id: int,
     request_id: UUID,
     raw_message: str,
 ) -> None:
@@ -96,7 +96,7 @@ def ask_question(
         raise InvalidQuestion()
     url = _url()
     try:
-        claim = repository.claim_question(url, profile_id, task_id, request_id, message)
+        claim = repository.claim_question(url, user_id, task_id, request_id, message)
     except psycopg.Error:
         raise WorkspaceUnavailable() from None
     if claim is None:
