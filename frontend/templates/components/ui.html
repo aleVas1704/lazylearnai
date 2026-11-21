@@ -1,0 +1,11 @@
+{% macro badge(text, kind='neutral') -%}
+<span class="badge badge--{{ kind }}">{{ text }}</span>
+{%- endmacro %}
+
+{% macro link_button(text, href, kind='primary') -%}
+<a class="btn btn--{{ kind }}" href="{{ href }}">{{ text }}</a>
+{%- endmacro %}
+
+{% macro panel(title, description) -%}
+<article class="panel"><h3>{{ title }}</h3><p>{{ description }}</p></article>
+{%- endmacro %}

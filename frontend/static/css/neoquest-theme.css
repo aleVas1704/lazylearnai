@@ -1,0 +1,49 @@
+/* NeoQuest — identidad visual propuesta de LazyLearnAI.
+   Importar DESPUÉS del tokens.css existente. Sin dependencias. */
+:root {
+  /* Fuente seleccionable desde el catálogo Google Fonts; fallback actual */
+  --ll-font-ui: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ll-navy-950: #10152f;
+  --ll-navy-800: #202b53;
+  --ll-purple-500: #7957ff;
+  --ll-purple-700: #6040da;
+  --ll-cyan-400: #31d8f7;
+  --ll-lime-300: #b9f46a;
+  --ll-gold-400: #ffc857;
+  --ll-ice-50: #f7f8fc;
+  --ll-white: #ffffff;
+  --ll-muted: #4d5874;
+  --ll-border: #d8dff0;
+  --ll-success-ink: #17633e;
+  --ll-error-ink: #a1233d;
+  --ll-bg: var(--ll-ice-50);
+  --ll-surface: var(--ll-white);
+  --ll-text: var(--ll-navy-950);
+  --ll-primary: var(--ll-purple-700);
+  --ll-primary-hover: #4d31c5;
+  --ll-focus: var(--ll-purple-500);
+  --ll-on-dark: var(--ll-ice-50);
+  --ll-radius-sm: 8px;
+  --ll-radius-md: 12px;
+  --ll-radius-lg: 18px;
+  --ll-radius-pill: 999px;
+  --ll-border-width: 1px;
+  --ll-outline-width: 3px;
+  --ll-shadow-card: 0 12px 28px rgb(16 21 47 / 9%);
+  --ll-space-1: 4px;
+  --ll-space-2: 8px;
+  --ll-space-3: 12px;
+  --ll-space-4: 16px;
+  --ll-space-6: 24px;
+  --ll-space-8: 32px;
+  /* Compatibilidad con las variables originales del starter */
+  --bg: var(--ll-bg);
+  --surface: var(--ll-surface);
+  --text: var(--ll-text);
+  --muted: var(--ll-muted);
+  --line: var(--ll-border);
+  --brand: var(--ll-primary);
+  --brand-hover: var(--ll-primary-hover);
+  --focus: var(--ll-focus);
+  --radius: var(--ll-radius-md);
+}

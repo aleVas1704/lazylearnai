@@ -1,0 +1,41 @@
+/* NeoQuest: SVG locales Lucide, iconos con currentColor mediante CSS mask.
+   Incluir después de neoquest-primitives.css. */
+.ll-icon--arrow-right { --ll-icon-file: url("/static/icons/arrow-right.svg"); }
+.ll-icon--book-check { --ll-icon-file: url("/static/icons/book-check.svg"); }
+.ll-icon--book-open { --ll-icon-file: url("/static/icons/book-open.svg"); }
+.ll-icon--bot { --ll-icon-file: url("/static/icons/bot.svg"); }
+.ll-icon--brain { --ll-icon-file: url("/static/icons/brain.svg"); }
+.ll-icon--calendar-days { --ll-icon-file: url("/static/icons/calendar-days.svg"); }
+.ll-icon--chart-no-axes-column { --ll-icon-file: url("/static/icons/chart-no-axes-column.svg"); }
+.ll-icon--chevron-right { --ll-icon-file: url("/static/icons/chevron-right.svg"); }
+.ll-icon--circle-check { --ll-icon-file: url("/static/icons/circle-check.svg"); }
+.ll-icon--clipboard-list { --ll-icon-file: url("/static/icons/clipboard-list.svg"); }
+.ll-icon--clock-3 { --ll-icon-file: url("/static/icons/clock-3.svg"); }
+.ll-icon--file-text { --ll-icon-file: url("/static/icons/file-text.svg"); }
+.ll-icon--flame { --ll-icon-file: url("/static/icons/flame.svg"); }
+.ll-icon--gamepad-2 { --ll-icon-file: url("/static/icons/gamepad-2.svg"); }
+.ll-icon--graduation-cap { --ll-icon-file: url("/static/icons/graduation-cap.svg"); }
+.ll-icon--house { --ll-icon-file: url("/static/icons/house.svg"); }
+.ll-icon--lightbulb { --ll-icon-file: url("/static/icons/lightbulb.svg"); }
+.ll-icon--lock-keyhole { --ll-icon-file: url("/static/icons/lock-keyhole.svg"); }
+.ll-icon--medal { --ll-icon-file: url("/static/icons/medal.svg"); }
+.ll-icon--menu { --ll-icon-file: url("/static/icons/menu.svg"); }
+.ll-icon--message-circle { --ll-icon-file: url("/static/icons/message-circle.svg"); }
+.ll-icon--notebook-pen { --ll-icon-file: url("/static/icons/notebook-pen.svg"); }
+.ll-icon--pencil { --ll-icon-file: url("/static/icons/pencil.svg"); }
+.ll-icon--search { --ll-icon-file: url("/static/icons/search.svg"); }
+.ll-icon--send { --ll-icon-file: url("/static/icons/send.svg"); }
+.ll-icon--settings { --ll-icon-file: url("/static/icons/settings.svg"); }
+.ll-icon--shield-check { --ll-icon-file: url("/static/icons/shield-check.svg"); }
+.ll-icon--sparkles { --ll-icon-file: url("/static/icons/sparkles.svg"); }
+.ll-icon--star { --ll-icon-file: url("/static/icons/star.svg"); }
+.ll-icon--target { --ll-icon-file: url("/static/icons/target.svg"); }
+.ll-icon--trophy { --ll-icon-file: url("/static/icons/trophy.svg"); }
+.ll-icon--user-round { --ll-icon-file: url("/static/icons/user-round.svg"); }
+.ll-icon--users { --ll-icon-file: url("/static/icons/users.svg"); }
+.ll-icon--zap { --ll-icon-file: url("/static/icons/zap.svg"); }
+
+/* Dibujos originales NeoQuest: iconos monocromáticos para CSS mask. */
+.ll-icon--character-portrait { --ll-icon-file: url("/static/icons/character-portrait.svg"); }
+.ll-icon--castle { --ll-icon-file: url("/static/icons/castle.svg"); }
+/* Para character-avatar.svg y adventure-castle.svg (multicolor), usar <img>. */

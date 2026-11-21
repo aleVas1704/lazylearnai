@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% from "components/ui.html" import link_button %}
+{% block content %}
+<section class="preview-page">
+  <p class="section-label">DEMO SIN JAVASCRIPT</p>
+  <h1>La ruta también funciona sin HTMX</h1>
+  {% include "components/preview.html" %}
+  <div class="actions">{{ link_button('Volver al inicio', '/', 'secondary') }}</div>
+</section>
+{% endblock %}

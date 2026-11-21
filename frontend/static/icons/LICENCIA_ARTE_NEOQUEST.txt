@@ -1,0 +1,1 @@
+Iconos originales creados para el kit NeoQuest de LazyLearnAI: character-portrait.svg, castle.svg, character-avatar.svg y adventure-castle.svg. No son assets oficiales de Lucide. El resto de SVG se distribuye bajo la licencia ISC incluida en LICENSE_LUCIDE.txt.

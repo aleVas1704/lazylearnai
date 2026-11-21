@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Ruff y Pytest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Instalar uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.13.9"
+          enable-cache: true
+      - name: Preparar Python
+        run: uv python install
+      - name: Instalar dependencias
+        run: |
+          if [ -f uv.lock ]; then
+            uv sync --locked --dev
+          else
+            uv sync --dev
+          fi
+      - name: Revisar lint
+        run: uv run --no-sync ruff check .
+      - name: Revisar formato
+        run: uv run --no-sync ruff format --check .
+      - name: Ejecutar pruebas
+        run: uv run --no-sync pytest -q

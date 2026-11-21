@@ -1,0 +1,23 @@
+.btn { display: inline-flex; justify-content: center; align-items: center;
+  min-height: 44px; border-radius: 8px; padding: 10px 18px;
+  font-size: 14px; font-weight: 650; border: 1px solid transparent; }
+.btn--primary { background: var(--brand); color: white; }
+.btn--primary:hover { background: var(--brand-hover); color: white; }
+.btn--secondary { border-color: var(--line); background: var(--surface); }
+.btn--secondary:hover { background: #eef2f7; color: var(--text); }
+.badge { display: inline-block; font-size: 12px; font-weight: 650;
+  border: 1px solid var(--line); padding: 4px 10px; border-radius: 999px; }
+.badge--neutral { background: #f1f5f9; }
+.panel { border: 1px solid var(--line); background: var(--surface); border-radius: var(--radius); padding: 24px; }
+.panel h3 { font-size: 17px; margin-bottom: 10px; }
+.panel p { color: var(--muted); margin-bottom: 0; font-size: 14px; }
+label { display:block; margin-bottom: 8px; font-weight: 650; font-size: 14px; }
+input { display: block; width: 100%; border: 1px solid #b9c3d0; border-radius: 8px;
+  min-height: 44px; padding: 10px 12px; margin-bottom: 14px; background: #fff; color: var(--text); }
+input::placeholder { color: #758296; }
+.result-empty { padding: 18px; color: var(--muted); border: 1px dashed var(--line);
+  border-radius: 8px; margin-top: 18px; font-size: 14px; }
+.result-success { display:flex; align-items:flex-start; gap: 12px;
+  border-radius: 8px; background:#effaf5; border:1px solid #acd5c1; padding: 16px; margin-top:18px; }
+.result-success p { margin: 4px 0 0; color: #345c49; overflow-wrap: anywhere; }
+.result-symbol { font-weight: bold; color: #146c43; }

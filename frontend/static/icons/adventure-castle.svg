@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-labelledby="t d">
+<title id="t">Castillo de aventura</title><desc id="d">Castillo de fantasía sobre isla flotante, con banderín dorado, montañas violetas y pradera.</desc>
+<rect x="4" y="4" width="152" height="152" rx="29" fill="#202B53"/>
+<path d="M7 100C28 66 48 85 66 68S114 59 154 84v44q-2 26-27 26H31Q5 154 7 128Z" fill="#7957FF" opacity=".48"/>
+<rect x="18" y="25" width="11" height="5" fill="#31D8F7"/><rect x="32" y="30" width="5" height="5" fill="#31D8F7"/><rect x="125" y="27" width="10" height="5" fill="#FFC857"/>
+<path d="M22 103L42 90H127L142 103 123 116H43Z" fill="#73C957"/><path d="M35 112H129L119 125H49Z" fill="#4067A2"/><path d="M49 125H119L103 145H62Z" fill="#36487A"/><path d="M67 145H98L84 153Z" fill="#252C5A"/>
+<path d="M48 100V64H65V76H95V62H114V100Z" fill="#DAD7EB"/><path d="M58 101V75H70V79H96V74H106V101" fill="#B3AFCF"/>
+<path d="M43 64V44H50V39H57V44H64V64M96 63V43H103V38H110V43H117V63" fill="#DAD7EB"/><path d="M45 64V50H62V64M98 62V48H115V62" fill="#C2BCD8"/>
+<rect x="50" y="54" width="6" height="7" fill="#202B53"/><rect x="105" y="53" width="6" height="7" fill="#202B53"/>
+<rect x="75" y="65" width="12" height="16" fill="#F7F8FC"/><path d="M73 100V90A7 7 0 0 1 87 90V100Z" fill="#4D5874"/>
+<path d="M80 64V31" fill="none" stroke="#202B53" stroke-width="4"/><path d="M82 31H103L95 38 103 45H82Z" fill="#FFC857"/><path d="M48 103H113" stroke="#B9F46A" stroke-width="5" stroke-linecap="round"/>
+<rect x="4" y="4" width="152" height="152" rx="29" fill="none" stroke="#9CA8E6" stroke-width="3"/>
+</svg>

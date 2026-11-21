@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "components/ui.html" import badge, link_button, panel %}
+{% block content %}
+  <section class="hero">
+    <div class="eyebrow">{{ badge('Plantilla inicial', 'neutral') }} <span>Monolito modular · 3 integrantes</span></div>
+    <h1>Una base sencilla para<br>construir algo útil.</h1>
+    <p class="lead">Frontend, backend y pruebas preparados en un solo repositorio.
+      Esta página no define el problema educativo: está lista para adaptarse a sus dos ensayos.</p>
+    <div class="actions">{{ link_button('Explorar la demo', '#demo') }} {{ link_button('Ver estado de API', '/health', 'secondary') }}</div>
+  </section>
+  <section class="features" aria-label="Características">
+    {{ panel('Una sola aplicación', 'FastAPI entrega las páginas HTML y la lógica de negocio.') }}
+    {{ panel('Componentes coherentes', 'Jinja2, variables CSS e iconos SVG con estilo uniforme.') }}
+    {{ panel('CI listo para GitHub', 'Ruff y Pytest se ejecutan automáticamente en cada PR.') }}
+  </section>
+  <section id="demo" class="demo-block">
+    <div><span class="section-label">INTERACCIÓN DE EJEMPLO</span><h2>Comprobar el flujo completo</h2>
+      <p>Escribe un nombre de tema. Con HTMX se actualiza la vista sin recargar; si HTMX no carga, el formulario sigue funcionando de forma tradicional.</p></div>
+    <div class="demo-form panel">
+      <form action="/preview" method="get" hx-get="/preview" hx-target="#result" hx-swap="innerHTML">
+        <label for="tema">Nombre de la práctica</label>
+        <input id="tema" type="text" name="tema" maxlength="80" placeholder="Ejemplo: fracciones" required>
+        <button class="btn btn--primary" type="submit">Mostrar vista previa</button>
+      </form>
+      <div id="result" role="status" aria-live="polite" class="result-empty">Aquí aparecerá el resultado.</div>
+    </div>
+  </section>
+{% endblock %}

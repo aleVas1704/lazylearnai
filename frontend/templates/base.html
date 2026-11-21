@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#10152f">
+    <title>{{ title }} · Hackathon</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/tokens.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/neoquest-theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/neoquest-primitives.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/neoquest-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/neoquest-mentor.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/layout.css') }}">
+    <script defer src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Ir al inicio">
+        <span class="brand-mark">H</span><span>Hackathon / base</span>
+      </a>
+      <nav aria-label="Principal" class="topnav">
+        <a href="/">Inicio</a>
+        <a href="/docs">API</a>
+        <a href="/health">Estado</a>
+      </nav>
+    </header>
+    <main class="container">
+      {% block content %}{% endblock %}
+    </main>
+    <footer class="footer">Base técnica de práctica · Python, Jinja2 y CSS</footer>
+  </body>
+</html>

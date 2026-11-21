@@ -1,0 +1,74 @@
+/* NeoQuest Mentor — variante VISUAL docente.
+   Cargar DESPUÉS de neoquest-theme.css, neoquest-primitives.css
+   y neoquest-icons.css. Sin rutas, acciones o pantallas definidas. */
+.theme--mentor {
+  /* Los mismos tokens de NeoQuest, otros valores SOLO en este ámbito. */
+  --ll-navy-950: #0b1b36;
+  --ll-navy-800: #1e2e4d;
+  --ll-purple-500: #3f5e9e;
+  --ll-purple-700: #314f88;
+  --ll-cyan-400: #14b8a6;
+  --ll-lime-300: #29b78b;
+  --ll-gold-400: #b89352;
+  --ll-ice-50: #e2e8f0;
+  --ll-white: #f8fafc;
+  --ll-muted: #53647e;
+  --ll-border: #ccd5e3;
+  --ll-bg: #f4f6fa;
+  --ll-surface: #f8fafc;
+  --ll-text: #14213a;
+  --ll-primary: #314f88;
+  --ll-primary-hover: #263d6a;
+  /* Foco más oscuro que el acento turquesa para contraste sobre blanco. */
+  --ll-focus: #0e746b;
+  --ll-on-dark: #f8fafc;
+  --ll-shadow-card: 0 10px 24px rgb(11 27 54 / 9%);
+
+  /* Compatibilidad con componentes del starter FastAPI / Jinja2. */
+  --bg: var(--ll-bg);
+  --surface: var(--ll-surface);
+  --text: var(--ll-text);
+  --muted: var(--ll-muted);
+  --line: var(--ll-border);
+  --brand: var(--ll-primary);
+  --brand-hover: var(--ll-primary-hover);
+  --focus: var(--ll-focus);
+  --radius: var(--ll-radius-md);
+
+  /* Fuente compartida: --ll-font-ui permanece definida en NeoQuest base. */
+  background-color: var(--ll-bg);
+  color: var(--ll-text);
+  font-family: var(--ll-font-ui);
+}
+
+/* Las clases existentes siguen siendo las mismas. */
+.theme--mentor .ll-game-shell {
+  background: var(--ll-navy-950);
+  color: var(--ll-on-dark);
+}
+.theme--mentor .ll-reading-surface {
+  background: var(--ll-bg);
+  color: var(--ll-text);
+}
+.theme--mentor .ll-card {
+  background: var(--ll-surface);
+  color: var(--ll-text);
+  border-color: var(--ll-border);
+  box-shadow: var(--ll-shadow-card);
+}
+.theme--mentor .ll-button {
+  background: var(--ll-primary);
+  border-color: var(--ll-primary);
+  color: #ffffff;
+}
+.theme--mentor .ll-button:hover {
+  background: var(--ll-primary-hover);
+  border-color: var(--ll-primary-hover);
+}
+.theme--mentor :focus-visible {
+  outline-color: var(--ll-focus);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme--mentor .ll-button { transition: none; }
+}
