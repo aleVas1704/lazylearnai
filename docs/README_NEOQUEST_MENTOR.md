@@ -146,7 +146,7 @@ Asignar la clase `theme--mentor` **solo al contenedor o vista que defina el desa
 - Revisar contraste (objetivo WCAG AA: 4.5:1 texto normal, 3:1 texto grande), navegación por teclado y foco visible.
 - Probar en 390 px, 768 px y 1440 px. No depender solo del color para comunicar estados.
 - Si se añade una fuente de Google Fonts, probar acentos en español, ecuaciones y tiempos de carga; respetar preferencias de movimiento reducido.
-- Ejecutar sin afirmar resultados no realizados: `uv run ruff check .`, `uv run ruff format --check .` y `uv run pytest -q`.
+- Revisar manualmente en el navegador y documentar problemas reales. Ruff es opcional y se utiliza localmente para estilo.
 
 ## 8. Instrucción para el desarrollador o asistente de IA
 

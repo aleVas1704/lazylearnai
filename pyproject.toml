@@ -1,7 +1,7 @@
 [project]
-name = "abstracthon-repo-base"
+name = "lazylearnai"
 version = "0.1.0"
-description = "Base reutilizable para dos ensayos de hackathon educativa"
+description = "Base de LazyLearnAI con FastAPI, Jinja2 y NeoQuest"
 requires-python = ">=3.12,<3.14"
 dependencies = [
     "fastapi>=0.115,<1",
@@ -12,8 +12,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "httpx>=0.27,<1",
-    "pytest>=8.3,<10",
     "ruff>=0.11,<1",
 ]
 
@@ -27,6 +25,3 @@ entrypoint = "backend.main:app"
 line-length = 100
 target-version = "py312"
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["."]

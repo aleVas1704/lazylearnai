@@ -15,17 +15,17 @@ git commit -m "feat: agregar primer cambio"
 git push -u origin feature/primer-cambio
 ```
 
-Abrir PR → revisar `CI / Ruff y Pytest` → revisión del equipo → merge a `main`.
+Abrir PR → revisión manual de código y funcionamiento → merge a `main`.
 
 ## Archivo de propiedad compartida
 
-Avisar antes de modificar: `backend/main.py`, `pyproject.toml`, `uv.lock`,
-`frontend/static/css/tokens.css`, `.github/workflows/ci.yml`.
+Avisar antes de modificar: `backend/main.py`, `pyproject.toml` y, cuando se genere, `uv.lock`,
+`frontend/static/css/tokens.css` y los estilos visuales compartidos.
 
 ## Uso de IA
 
 Antes de pedir cambios, especificar objetivos, archivos permitidos y criterios de aceptación.
-Ejecutar checks y entender el código generado antes de crear el PR.
+Revisar manualmente la funcionalidad y entender el código generado antes de crear el PR. Usar Ruff localmente si es necesario.
 
 ## Vercel Hobby
 

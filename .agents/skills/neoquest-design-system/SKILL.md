@@ -21,7 +21,7 @@ Se permiten únicamente:
 
 Proyecto existente: Python 3.12, FastAPI, Jinja2, HTML, CSS nativo, HTMX opcional, PostgreSQL/Neon cuando se necesite persistencia. Un solo monolito. Consultar `AGENTS.md`, `docs/ARCHITECTURE.md`, `frontend/README.md` y `docs/DESIGN_SYSTEM.md`.
 
-No instalar React, Next.js, Tailwind, Bootstrap, dependencias de iconos ni Node. No crear un `package.json` ni un segundo frontend. No tocar backend, rutas, pruebas ni configuración para aplicar la paleta.
+No instalar React, Next.js, Tailwind, Bootstrap, dependencias de iconos ni Node. No crear un `package.json` ni un segundo frontend. No tocar backend, rutas ni configuración para aplicar la paleta.
 
 ## 3. Paleta oficial propuesta: NeoQuest
 
@@ -131,6 +131,6 @@ Los archivos incluidos son `neoquest-theme.css` y `neoquest-primitives.css`. Se 
 4. Elegir Lucide para la interfaz y, cuando el mockup lo justifique, una de las dos ilustraciones RPG originales incluidas; conservar el archivo de licencia de Lucide.
 5. Usar únicamente `ll-button` y `ll-card` como componentes genéricos hasta que se aprueben mockups y alcance.
 6. Validar legibilidad, estados de foco, responsive y ausencia de texto sobre colores neón.
-7. Ejecutar e informar resultados reales: `uv run ruff check .`, `uv run ruff format --check .`, `uv run pytest -q`.
+7. Comprobar manualmente la pantalla en móvil y escritorio; si se usa Ruff, informar únicamente resultados reales.
 
 **No inferir pantallas, nombres, funciones o lógica educativa a partir de ejemplos visuales.**

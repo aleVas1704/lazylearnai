@@ -17,8 +17,8 @@ Sirve como base de **dos ensayos**; no presupone el desafío que se anuncie ofic
 - Evitar interfaces genéricas con demasiados gradientes, brillos o efectos.
 
 ## Calidad y seguridad
-- Antes de entregar: `uv run ruff check .`, `uv run ruff format --check .` y `uv run pytest -q`.
-- Añadir prueba cuando se introduzca una regla de negocio relevante.
+- Revisar manualmente cada funcionalidad y sus estados de error antes de entregar.
+- Ruff puede utilizarse localmente para revisar estilo y formatear: `uv run ruff check .` y `uv run ruff format .`.
 - No subir `.env`, claves, tokens, cookies ni datos de usuario al repositorio.
 - No exponer `DATABASE_URL` ni errores internos de Neon en respuestas HTML/JSON.
 - Nunca ejecutar migraciones destructivas automáticamente en el arranque o build.

@@ -5,9 +5,7 @@
 - `frontend/`: Jinja2, HTML, CSS, HTMX opcional.
 - `backend/`: única aplicación FastAPI, módulos por funcionalidad.
 - `backend/core/`: configuración compartida y conexión al servidor Neon.
-- `tests/`: pruebas automáticas.
 - `migrations/`: cambios controlados del esquema, solo cuando existan tablas.
-- `.github/workflows/ci.yml`: revisión automática antes de integrar.
 - `.agents/skills/`: guía para asistentes de IA.
 
 ## Flujo de una petición

@@ -1,10 +1,11 @@
 ## ¿Qué cambia?
 - 
 
-## ¿Cómo se verificó?
+## Revisión manual
 - [ ] `uv run ruff check .`
-- [ ] `uv run ruff format --check .`
-- [ ] `uv run pytest -q`
+- [ ] `uv run ruff format .`
+- [ ] Funcionalidad revisada en el navegador
+- [ ] Estados de error revisados
 - [ ] Vista móvil revisada (si cambia la UI)
 
 ## ¿Toca dependencias, base de datos o variables?
