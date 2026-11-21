@@ -40,7 +40,7 @@ async def dashboard(
     if session is None:
         return login_redirect()
     try:
-        data = await run_in_threadpool(service.load_dashboard, session.profile_id, subject)
+        data = await run_in_threadpool(service.load_dashboard, session.user_id, subject)
     except service.DashboardUnavailable:
         return request.app.state.templates.TemplateResponse(
             request=request,

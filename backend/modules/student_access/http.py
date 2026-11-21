@@ -6,7 +6,7 @@ from fastapi import Request
 
 from backend.core.config import student_local_http_enabled
 
-COOKIE_NAME = "student_demo_session"
+COOKIE_NAME = "ll_student_session"
 PRIVATE_HEADERS = {"Cache-Control": "no-store", "Referrer-Policy": "same-origin"}
 
 

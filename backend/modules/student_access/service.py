@@ -1,4 +1,8 @@
-"""Validación y sesión de demo: nombre + carnet NO es autenticación segura."""
+"""Acceso estudiante usando usuarios/roles existentes en Neon.
+
+No registra credenciales duplicadas. Las sesiones usan ll_student_sessions,
+sin tablas student_demo_* ni identificadores de perfil UUID.
+"""
 
 import hashlib
 import hmac
@@ -7,15 +11,14 @@ import secrets
 import unicodedata
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from uuid import UUID
 
 import psycopg
 
-from backend.core.config import database_url, student_id_hmac_key
+from backend.core.config import database_url
 from backend.modules.student_access import repository
 
 SESSION_SECONDS = 8 * 60 * 60
-UNAVAILABLE = "El acceso de demostración no está disponible. Inténtalo más tarde."
+UNAVAILABLE = "El acceso no está disponible en este momento. Inténtalo más tarde."
 
 
 class InvalidFields(Exception):
@@ -33,22 +36,20 @@ class AccessRejected(Exception):
 
 @dataclass(frozen=True)
 class StudentSession:
-    profile_id: UUID
+    user_id: int
     display_name: str
 
 
-def normalize_fields(name: str, identity_number: str) -> tuple[str, str]:
+def normalize_fields(name: str, password: str) -> tuple[str, str]:
     name = " ".join(unicodedata.normalize("NFC", name).split())
-    # Únicos separadores permitidos: espacio ASCII y guion ASCII. Conservar ceros.
-    identity_number = identity_number.replace(" ", "").replace("-", "")
-    errors = {}
+    errors: dict[str, str] = {}
     if not 2 <= len(name) <= 80 or any(unicodedata.category(c).startswith("C") for c in name):
-        errors["name"] = "Escribe un nombre de entre 2 y 80 caracteres."
-    if not re.fullmatch(r"[0-9]{5,12}", identity_number):
-        errors["identity_number"] = "Usa un identificador ficticio de 5 a 12 dígitos."
+        errors["name"] = "Escribe tu nombre de usuario (entre 2 y 80 caracteres)."
+    if not password or len(password) > 256:
+        errors["password"] = "Introduce tu contraseña."
     if errors:
         raise InvalidFields(errors)
-    return name, identity_number
+    return name, password
 
 
 def hash_session(token: str | None) -> str | None:
@@ -57,23 +58,65 @@ def hash_session(token: str | None) -> str | None:
     return hashlib.sha256(token.encode("ascii")).hexdigest()
 
 
-def create_access(name: str, identity_number: str, previous_token: str | None) -> str:
-    name, identity_number = normalize_fields(name, identity_number)
-    url, key = database_url(), student_id_hmac_key()
-    if not url or not key:
+def verify_password(password: str, stored: str, *, allow_legacy_plaintext: bool) -> bool:
+    """Verifica PBKDF2 (cuentas nuevas) o, SOLO local, credenciales heredadas.
+
+    No se debe habilitar el modo heredado en entornos públicos. No determina si
+    contraseñas de 8 caracteres son realmente texto plano: eso debe confirmarse.
+    """
+    if stored.startswith("pbkdf2_sha256$"):
+        try:
+            algorithm, iterations_text, salt_hex, digest_hex = stored.split("$", 3)
+            iterations = int(iterations_text)
+            if algorithm != "pbkdf2_sha256" or not 200_000 <= iterations <= 1_200_000:
+                return False
+            salt = bytes.fromhex(salt_hex)
+            expected = bytes.fromhex(digest_hex)
+            if len(salt) < 16 or len(expected) != 32:
+                return False
+            given = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, iterations)
+        except (ValueError, TypeError):
+            return False
+        return hmac.compare_digest(given, expected)
+
+    # Únicamente para pruebas HTTP loopback si el equipo confirmó texto plano.
+    # Nunca activa para hashes desconocidos ni otros formatos explícitos.
+    if allow_legacy_plaintext and len(stored) == 8:
+        return hmac.compare_digest(password.encode("utf-8"), stored.encode("utf-8"))
+    return False
+
+
+def create_access(
+    name: str,
+    password: str,
+    previous_token: str | None,
+    *,
+    allow_legacy_plaintext: bool = False,
+) -> str:
+    name, password = normalize_fields(name, password)
+    url = database_url()
+    if not url:
         raise AccessUnavailable()
-    identity_hmac = hmac.new(key, identity_number.encode("ascii"), hashlib.sha256).hexdigest()
-    token = secrets.token_urlsafe(32)
     try:
-        repository.save_access(
-            url,
-            name,
-            identity_hmac,
-            hashlib.sha256(token.encode("ascii")).hexdigest(),
-            datetime.now(UTC) + timedelta(seconds=SESSION_SECONDS),
-            hash_session(previous_token),
+        account = repository.lookup_student_account(url, name)
+    except psycopg.Error:
+        raise AccessUnavailable() from None
+    if account is None or not verify_password(
+        password, account["password"], allow_legacy_plaintext=allow_legacy_plaintext
+    ):
+        raise AccessRejected()
+
+    token = secrets.token_urlsafe(32)
+    token_hash = hashlib.sha256(token.encode("ascii")).hexdigest()
+    try:
+        repository.save_access_for_neon_user(
+            url=url,
+            user_id=account["id"],
+            token_hash=token_hash,
+            expires_at=datetime.now(UTC) + timedelta(seconds=SESSION_SECONDS),
+            previous_token_hash=hash_session(previous_token),
         )
-    except repository.ProfileMismatch:
+    except repository.AccountRevoked:
         raise AccessRejected() from None
     except psycopg.Error:
         raise AccessUnavailable() from None
@@ -88,7 +131,7 @@ def has_session(token: str | None) -> bool:
     if not url:
         raise AccessUnavailable()
     try:
-        return repository.session_exists(url, token_hash)
+        return repository.session_profile(url, token_hash) is not None
     except psycopg.Error:
         raise AccessUnavailable() from None
 
