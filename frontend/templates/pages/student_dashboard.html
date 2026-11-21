@@ -1,0 +1,54 @@
+{% extends "student_dashboard_base.html" %}
+{% from "components/student_dashboard.html" import subject_link, task_row %}
+{% block dashboard_content %}
+<header class="dashboard-header">
+  <a class="dashboard-brand" href="/student/dashboard" aria-label="Panel principal de LazyLearnAI">
+    <img src="{{ url_for('static', path='art/login-book.svg') }}" width="64" height="50" alt="" aria-hidden="true">
+    <span>LazyLearn<span>AI</span></span>
+  </a>
+  <form action="/student/logout" method="post">
+    <button class="ll-button dashboard-logout" type="submit"><span class="ll-icon ll-icon--lock-keyhole" aria-hidden="true"></span>Salir</button>
+  </form>
+</header>
+
+<main class="dashboard-shell">
+  <section class="dashboard-welcome" aria-labelledby="welcome-title">
+    <img class="dashboard-student" src="{{ url_for('static', path='art/login-student.svg') }}" alt="" aria-hidden="true">
+    <div class="dashboard-welcome-copy">
+      <h1 id="welcome-title">¡Bienvenido, {{ student_name }}!</h1>
+      <p>Consulta tus materias y las tareas que tienes asignadas.</p>
+    </div>
+    <img class="dashboard-castle" src="{{ url_for('static', path='art/login-castle.svg') }}" alt="" aria-hidden="true">
+  </section>
+
+  {% if service_unavailable %}
+    <p class="dashboard-alert" role="alert">Las materias y tareas no están disponibles. Inténtalo más tarde.</p>
+  {% endif %}
+
+  <div class="dashboard-grid">
+    <section class="ll-card dashboard-panel dashboard-subjects" aria-labelledby="subjects-title">
+      <h2 id="subjects-title">Materias</h2>
+      {% if subjects %}
+        <ul class="dashboard-subject-list">
+          {% for subject in subjects %}{{ subject_link(subject, selected_subject) }}{% endfor %}
+        </ul>
+      {% else %}
+        <p class="dashboard-empty">Todavía no tienes materias asignadas.</p>
+      {% endif %}
+    </section>
+
+    <section class="ll-card dashboard-panel dashboard-tasks" aria-labelledby="tasks-title">
+      <h2 id="tasks-title">{% if selected_subject %}Tareas de {{ selected_subject.name }}{% else %}Tareas{% endif %}</h2>
+      {% if tasks %}
+        <ul class="dashboard-task-list">
+          {% for task in tasks %}{{ task_row(task) }}{% endfor %}
+        </ul>
+      {% elif selected_subject %}
+        <p class="dashboard-empty">No tienes tareas publicadas para esta materia.</p>
+      {% else %}
+        <p class="dashboard-empty">Selecciona una materia para consultar sus tareas.</p>
+      {% endif %}
+    </section>
+  </div>
+</main>
+{% endblock %}

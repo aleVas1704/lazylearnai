@@ -6,7 +6,7 @@ from backend.modules.demo.service import prepare_preview
 router = APIRouter(tags=["Demo"])
 
 
-@router.get("/", response_class=HTMLResponse)
+@router.get("/demo", response_class=HTMLResponse)
 def home(request: Request) -> HTMLResponse:
     return request.app.state.templates.TemplateResponse(
         request=request,

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 210" shape-rendering="crispEdges">
+<!-- Arte original: estudiante de perfil hacia la derecha, mochila azul. -->
+<path d="M35 107V89H23V76H13V62h14V48h14V29h13v12h18V32h22v-7h23V14h17v15h-8v9h27v11h-13v8h15v15h-9v38h-13v15h-14v12h17v12h10v21h10v16h10v21H22v-20H12v-25h9v-28h14v-14h16v-13Z" fill="#10152f"/>
+<path d="M41 82h78v-6h21v21h8v9h-9v13h-16v12H90v-16H68V98H41Z" fill="#eda77f"/>
+<path d="M119 82h15v21h7v8h-13v11h-18V99h9Z" fill="#ffd49d"/>
+<path d="M117 83h27v6h-5v18h-18V88h-13v-5Zm8 6v12h9V89Z" fill="#10152f"/>
+<path d="M27 65h13V50h8V36h4v15h21V40h24v-7h21v-7h8v9h-10v10h28v4h-16v8h17v12h-24v10h-13v18H97v15H77v7H56v-10H43V96H33V80H22v-9h17Z" fill="#64405e"/>
+<path d="M39 58h13V47h26v-5h23v-7h17v6h-11v9h20v7h-22v9H81v8H60v8H43v-9H33v-6h16Z" fill="#9b624b"/>
+<path d="M52 51h23v-5h23v-7h17v5h-12v8H85v6H67v6H51ZM106 52h23v5h-23v8H89v-5h17Z" fill="#de9952"/>
+<path d="M39 77h16v12h15v11h26v10H76v6H58v-10H46V93h-7Z" fill="#4c365a"/>
+<path d="M105 101h8v16h-12v-8h4Z" fill="#e6a07d"/>
+<path d="M50 122h48v8h22v10H96v6H42v-8h-6v-7h14Z" fill="#284da2"/>
+<path d="M48 124h45v8h16v5H54v-4H43v-5h5Z" fill="#4779d5"/>
+<path d="M114 142h14v10h9v22h11v16h8v16h-34v-20h-12v-20H99v-15Z" fill="#9f6658"/>
+<path d="M125 154h7v20h12v16h9v15h-20v-13h-11v-17h-9v-17h12Z" fill="#e6a273"/>
+<path d="M115 165h21v9h7v9h-23v-9h-5Z" fill="#3159a3"/>
+<path d="M119 168h15v7h7v4h-19v-6h-3Z" fill="#72a5db"/>
+<path d="M34 145h15v13H35v29H21v-22h8v-15h5Z" fill="#764968"/>
+<path d="M40 148h54v-8h17v10h-9v12h-5v38H87v7H30v-7H22v-36h8v-12h10Z" fill="#1e347a"/>
+<path d="M39 153h48v-7h12v8h-8v39h-9v9H30v-9h-3v-27h8v-10h4Z" fill="#3261be"/>
+<path d="M39 156h44v7H40v28H30v-24h5v-7h4ZM89 153h8v35h-7v9h-7v-8h6Z" fill="#6094ed"/>
+<path d="M43 170h15v5h7v-5h16v27H66v4h-9v-4H40v-22h3Z" fill="#10152f"/>
+<path d="M45 173h12v5h8v-5h13v21H65v4h-7v-4H43v-16h2Z" fill="#ffc857"/>
+<path d="M48 178h8v4h5v10h-6v-3h-8ZM65 179h10v11H65Z" fill="#416fce"/>
+<path d="M18 194h14v-5h19v10h21v-6h21v8h17v-7h23v9h22v-6h15v13H9v-10h9Z" fill="#36846d"/>
+<path d="M12 201h12v-7h20v7h22v6H12ZM93 204h15v-6h19v6h22v6H93Z" fill="#93c64e"/>
+</svg>

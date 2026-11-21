@@ -1,0 +1,122 @@
+/* Extensiones locales derivadas de NeoQuest: lavanda para campos y superficie.
+   El arte SVG tiene su propia paleta de ilustración; no modifica tokens globales. */
+.student-access {
+  --access-input: color-mix(in srgb, var(--ll-purple-500) 34%, var(--ll-ice-50));
+  --access-paper: color-mix(in srgb, var(--ll-purple-500) 7%, var(--ll-white));
+  --access-sky: color-mix(in srgb, var(--ll-purple-700) 28%, var(--ll-navy-800));
+  --access-gold-shadow: color-mix(in srgb, var(--ll-gold-400) 65%, var(--ll-error-ink));
+  margin: 0;
+  background: var(--ll-navy-800);
+  color: var(--ll-navy-950);
+  font: 400 16px/1.5 var(--ll-font-ui);
+}
+.student-access *, .student-access *::before, .student-access *::after { box-sizing: border-box; }
+.access-world {
+  position: relative;
+  isolation: isolate;
+  min-height: 850px;
+  min-height: max(850px, 100svh);
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--ll-navy-800) 0%, var(--access-sky) 30%, var(--ll-purple-700) 65%, var(--ll-purple-500) 85%, var(--ll-navy-800));
+}
+.access-scenery { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.access-scenery img { position: absolute; display: block; image-rendering: pixelated; }
+.access-content { width: min(100% - 40px, 500px); margin: 0 auto; padding: 50px 0 290px; }
+.access-brand { text-align: center; margin-bottom: 32px; }
+.access-brand > img { width: 120px; height: 98px; object-fit: contain; display: block; margin: 0 auto 8px; }
+.access-brand h1 { margin: 0; color: var(--ll-white); font-size: clamp(30px, 8.9vw, 40px); font-weight: 800; line-height: 1.15; letter-spacing: -1.5px; }
+.access-brand h1 span { color: color-mix(in srgb, var(--ll-purple-500) 75%, var(--ll-white)); }
+.access-card {
+  padding: 25px 24px 28px;
+  border: 2px solid var(--ll-white);
+  border-radius: 26px;
+  background: linear-gradient(135deg, var(--ll-white), var(--access-paper));
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--ll-purple-500) 40%, var(--ll-white)), 0 14px 28px rgb(16 21 47 / 18%);
+}
+.access-card:focus-within { outline: none; }
+.access-field + .access-field { margin-top: 20px; }
+.access-field label { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-size: clamp(16px, 4.8vw, 20px); font-weight: 750; line-height: 1.5; }
+.access-field .ll-icon { width: 30px; height: 30px; }
+.access-id-icon { --ll-icon-file: url('/static/icons/identity-card.svg'); }
+.access-field input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  padding: 7px 14px;
+  background: var(--access-input);
+  color: var(--ll-navy-950);
+  font: 500 18px/1.5 var(--ll-font-ui);
+}
+.access-field input:focus-visible { outline: 3px solid var(--ll-purple-700); outline-offset: 3px; }
+.access-field input[aria-invalid="true"] { border: 2px solid var(--ll-error-ink); }
+.access-button-frame { margin: 28px 2px 0; padding: 4px; background: var(--ll-navy-950); clip-path: polygon(0 12px, 4px 12px, 4px 8px, 8px 8px, 8px 4px, 16px 4px, 16px 0, calc(100% - 16px) 0, calc(100% - 16px) 4px, calc(100% - 8px) 4px, calc(100% - 8px) 8px, calc(100% - 4px) 8px, calc(100% - 4px) 12px, 100% 12px, 100% calc(100% - 12px), calc(100% - 4px) calc(100% - 12px), calc(100% - 4px) calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) calc(100% - 4px), calc(100% - 16px) calc(100% - 4px), calc(100% - 16px) 100%, 16px 100%, 16px calc(100% - 4px), 8px calc(100% - 4px), 8px calc(100% - 8px), 4px calc(100% - 8px), 4px calc(100% - 12px), 0 calc(100% - 12px)); }
+.access-submit.ll-button {
+  width: 100%;
+  min-height: 58px;
+  gap: 18px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--ll-gold-400);
+  color: var(--ll-navy-950);
+  font-size: 26px;
+  font-weight: 800;
+  box-shadow: inset 0 4px 0 color-mix(in srgb, var(--ll-gold-400) 40%, var(--ll-white)), inset 0 -5px 0 var(--access-gold-shadow), inset 4px 0 0 color-mix(in srgb, var(--ll-gold-400) 55%, var(--ll-white)), inset -4px 0 0 var(--access-gold-shadow);
+}
+.access-submit.ll-button:hover { filter: brightness(1.06); }
+.access-submit.ll-button:active { transform: translateY(2px); box-shadow: inset 0 2px 0 var(--access-gold-shadow); }
+.access-submit.ll-button:focus-visible { outline: 3px solid var(--ll-navy-950); outline-offset: -9px; }
+.access-play { width: 19px; height: 24px; background: currentColor; clip-path: polygon(0 0, 100% 50%, 0 100%); border-radius: 3px; }
+.access-error { margin: 10px 0 0; font-size: 16px; line-height: 1.5; color: var(--ll-error-ink); }
+.access-alert { margin: 0 0 20px; }
+.access-confirmed h2 { margin: 0; font-size: 24px; line-height: 1.3; }
+.access-confirmed p:last-child { margin-bottom: 0; }
+.scene-landscape { bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; min-width: 850px; height: 260px; object-fit: fill; }
+.scene-student { bottom: 16px; left: 0; width: 46%; max-width: 225px; }
+.scene-castle { bottom: 80px; right: -6px; width: 40%; max-width: 205px; }
+.scene-ground { position: absolute; bottom: 0; width: 100%; height: 30px; background: var(--ll-navy-800); clip-path: polygon(0 0, 12% 0, 12% 20%, 24% 20%, 24% 40%, 36% 40%, 36% 70%, 66% 70%, 66% 40%, 83% 40%, 83% 10%, 100% 10%, 100% 100%, 0 100%); }
+.scene-cloud { opacity: .7; width: 135px; }
+.cloud-one { top: 16%; left: -70px; }
+.cloud-two { top: 9%; right: -75px; width: 170px; }
+.cloud-three { bottom: 205px; left: -30px; width: 170px; opacity: .5; }
+.cloud-four { bottom: 240px; right: -60px; opacity: .5; }
+.scene-star { position: absolute; width: 15px; height: 21px; background: var(--ll-purple-500); clip-path: polygon(40% 0, 60% 0, 60% 35%, 100% 45%, 100% 55%, 60% 65%, 60% 100%, 40% 100%, 40% 65%, 0 55%, 0 45%, 40% 35%); }
+.star-one { top: 8%; left: 18%; }
+.star-two { top: 28%; right: 10%; width: 10px; height: 14px; }
+.star-three { bottom: 250px; left: 24%; }
+.star-four { bottom: 220px; right: 22%; width: 7px; height: 10px; }
+@media (min-width: 600px) {
+  .access-content { padding-top: 56px; padding-bottom: 330px; }
+  .access-brand > img { width: 160px; height: 125px; }
+  .access-brand h1 { font-size: 52px; }
+  .access-card { padding: 28px 34px 32px; border-radius: 30px; }
+  .access-field label { font-size: 24px; }
+  .access-field input { height: 48px; }
+  .access-field + .access-field { margin-top: 24px; }
+  .access-submit.ll-button { min-height: 64px; font-size: 30px; }
+  .scene-student { left: 3%; width: 29%; max-width: 320px; }
+  .scene-castle { right: 2%; width: 28%; max-width: 300px; bottom: 95px; }
+  .scene-landscape { height: 320px; }
+  .cloud-one { left: -40px; width: 250px; }
+  .cloud-two { right: -20px; width: 210px; }
+}
+@media (min-width: 1024px) {
+  .access-world { min-height: max(820px, 100svh); }
+  .access-content { padding: clamp(50px, 7vh, 90px) 0 180px; }
+  .access-brand { margin-bottom: 36px; }
+  .access-brand > img { width: 190px; height: 145px; margin-bottom: 6px; }
+  .access-brand h1 { font-size: 60px; }
+  .access-field label { font-size: 25px; }
+  .access-field .ll-icon { width: 34px; height: 34px; }
+  .access-button-frame { margin: 30px 20px 0; }
+  .scene-student { width: 29%; max-width: 390px; left: 3%; bottom: 8px; }
+  .scene-castle { width: 24%; max-width: 340px; right: 2%; bottom: 105px; }
+  .scene-landscape { height: 37%; min-width: 1440px; }
+  .cloud-one { top: 12%; left: -20px; width: 340px; }
+  .cloud-two { top: 13%; right: 3%; width: 235px; }
+  .cloud-three { top: 37%; bottom: auto; left: -60px; width: 290px; }
+  .cloud-four { top: 43%; bottom: auto; right: 1%; width: 235px; }
+}
+@media (prefers-reduced-motion: reduce) { .access-submit.ll-button { transition: none; } }

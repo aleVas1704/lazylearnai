@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#10152f">
+    <title>{{ title }} · LazyLearnAI</title>
+    <link rel="icon" href="{{ url_for('static', path='art/login-book.svg') }}" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/neoquest-theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/neoquest-primitives.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/neoquest-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/student-dashboard.css') }}">
+  </head>
+  <body class="student-dashboard-page">
+    {% block dashboard_content %}{% endblock %}
+  </body>
+</html>
