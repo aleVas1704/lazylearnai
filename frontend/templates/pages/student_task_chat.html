@@ -1,0 +1,71 @@
+{% extends "student_task_chat_base.html" %}
+
+{% block task_content %}
+<header class="task-header">
+  <a class="task-brand" href="/student/dashboard" aria-label="Ir al panel de LazyLearnAI">
+    <img src="{{ url_for('static', path='art/login-book.svg') }}" alt="" width="52" height="44">
+    <span>LazyLearn<span>AI</span></span>
+  </a>
+  <nav class="task-header-actions" aria-label="Acciones de sesión">
+    <a class="task-back" href="/student/dashboard?subject={{ task.subject_slug | urlencode }}">← Volver a tareas</a>
+    <form action="/student/logout" method="post">
+      <button class="ll-button task-logout" type="submit">Cerrar sesión</button>
+    </form>
+  </nav>
+</header>
+
+<main class="task-workspace">
+  <section class="task-details" aria-labelledby="task-title">
+    <p class="task-subject">{{ task.subject_name }}</p>
+    <h1 id="task-title">{{ task.title }}</h1>
+    <div class="task-rule" aria-hidden="true"></div>
+    <h2>Descripción</h2>
+    <p class="task-description">{{ task.description }}</p>
+    <h2>Enunciado</h2>
+    <div class="task-statement">{{ task.statement }}</div>
+  </section>
+
+  <section class="task-conversation" aria-label="Conversación sobre la tarea">
+    <div class="task-messages" role="log" aria-live="polite" aria-relevant="additions text">
+      {% if error %}
+      <div class="task-alert" role="alert">
+        <p>{{ error }}</p>
+        {% if not messages %}
+        <form action="/student/tasks/{{ task.id }}/start" method="post">
+          <button class="task-retry" type="submit">Reintentar explicación</button>
+        </form>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if not error and (not conversation or (not messages and conversation.initial_status != 'ready')) %}
+      <div class="task-alert task-alert--quiet">
+        <p>La explicación todavía no se ha iniciado.</p>
+        <form action="/student/tasks/{{ task.id }}/start" method="post">
+          <button class="task-retry" type="submit">Preparar explicación</button>
+        </form>
+      </div>
+      {% endif %}
+
+      {% for message in messages %}
+      <article class="task-message task-message--{{ message.role }}{% if message.status == 'failed' %} is-failed{% endif %}">
+        <p>{{ message.content }}</p>
+        {% if message.status == 'failed' %}<small>La respuesta quedó pendiente. Reenvía la pregunta para intentar de nuevo.</small>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
+
+    <form class="task-composer" action="/student/tasks/{{ task.id }}/messages" method="post" data-task-composer>
+      <input type="hidden" name="request_id" value="{{ request_id }}">
+      <label class="sr-only" for="task-message">Pregunta sobre la tarea</label>
+      <textarea id="task-message" name="message" rows="2" maxlength="{{ max_message_length }}"
+        placeholder="Escribe una pregunta sobre esta tarea..." required{% if not messages %} disabled{% endif %}>{{ draft }}</textarea>
+      <button type="submit" aria-label="Enviar pregunta" data-send-button{% if not messages %} disabled{% endif %}>
+        <span class="ll-icon ll-icon--send" aria-hidden="true"></span>
+        <span class="sr-only">Enviar</span>
+      </button>
+      <span class="task-sending" role="status" hidden data-sending>Enviando…</span>
+    </form>
+  </section>
+</main>
+{% endblock %}

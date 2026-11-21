@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
+    <meta name="theme-color" content="#202b53">
+    <title>{{ title }} · LazyLearnAI</title>
+    <link rel="icon" href="{{ url_for('static', path='art/login-book.svg') }}" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/neoquest-theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/neoquest-primitives.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/neoquest-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/student-login.css') }}">
+  </head>
+  <body class="student-access">
+    <main class="access-world">
+      <div class="access-scenery" aria-hidden="true">
+        <img class="scene-cloud cloud-one" src="{{ url_for('static', path='art/login-cloud.svg') }}" alt="">
+        <img class="scene-cloud cloud-two" src="{{ url_for('static', path='art/login-cloud.svg') }}" alt="">
+        <img class="scene-cloud cloud-three" src="{{ url_for('static', path='art/login-cloud.svg') }}" alt="">
+        <img class="scene-cloud cloud-four" src="{{ url_for('static', path='art/login-cloud.svg') }}" alt="">
+        <span class="scene-star star-one"></span><span class="scene-star star-two"></span>
+        <span class="scene-star star-three"></span><span class="scene-star star-four"></span>
+        <img class="scene-landscape" src="{{ url_for('static', path='art/login-landscape.svg') }}" alt="">
+        <img class="scene-castle" src="{{ url_for('static', path='art/login-castle.svg') }}" alt="">
+        <img class="scene-student" src="{{ url_for('static', path='art/login-student.svg') }}" alt="">
+        <div class="scene-ground"></div>
+      </div>
+      <div class="access-content">
+        <header class="access-brand">
+          <img src="{{ url_for('static', path='art/login-book.svg') }}" width="170" height="130" alt="" aria-hidden="true">
+          <h1>LazyLearn<span>AI</span></h1>
+        </header>
+        {% block access_content %}{% endblock %}
+      </div>
+    </main>
+  </body>
+</html>

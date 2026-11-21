@@ -11,3 +11,6 @@ __pycache__/
 .idea/
 coverage.xml
 htmlcov/
+.tmp-task-chat-pg/
+
+# Archivos temporales de Codex y navegador

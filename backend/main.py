@@ -6,6 +6,9 @@ from fastapi.templating import Jinja2Templates
 
 from backend.modules.demo.routes import router as demo_router
 from backend.modules.health.routes import router as health_router
+from backend.modules.student_access.routes import router as student_access_router
+from backend.modules.student_dashboard.routes import router as student_dashboard_router
+from backend.modules.student_task_chat.routes import router as student_task_chat_router
 
 ROOT = Path(__file__).resolve().parent.parent
 FRONTEND = ROOT / "frontend"
@@ -15,3 +18,6 @@ app.mount("/static", StaticFiles(directory=FRONTEND / "static"), name="static")
 app.state.templates = Jinja2Templates(directory=FRONTEND / "templates")
 app.include_router(health_router)
 app.include_router(demo_router)
+app.include_router(student_access_router)
+app.include_router(student_dashboard_router)
+app.include_router(student_task_chat_router)

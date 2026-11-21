@@ -1,0 +1,20 @@
+{% macro subject_link(subject, selected_subject) -%}
+<li>
+  <a class="dashboard-subject{% if selected_subject and subject.id == selected_subject.id %} is-selected{% endif %}"
+    href="/student/dashboard?subject={{ subject.slug | urlencode }}"
+    {% if selected_subject and subject.id == selected_subject.id %}aria-current="page"{% endif %}>
+    <span class="ll-icon ll-icon--{{ subject.icon_name }}" aria-hidden="true"></span>
+    <span>{{ subject.name }}</span>
+    <span class="ll-icon ll-icon--chevron-right dashboard-subject-arrow" aria-hidden="true"></span>
+  </a>
+</li>
+{%- endmacro %}
+
+{% macro task_row(task) -%}
+<li class="dashboard-task">
+  <span class="dashboard-task-title"><span class="ll-icon ll-icon--clipboard-list" aria-hidden="true"></span>{{ task.title }}</span>
+  <form action="/student/tasks/{{ task.id }}/start" method="post">
+    <button class="ll-button dashboard-start" type="submit"><span aria-hidden="true">▶</span> Comenzar</button>
+  </form>
+</li>
+{%- endmacro %}
