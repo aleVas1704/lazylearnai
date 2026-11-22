@@ -21,6 +21,8 @@
     <div class="task-rule" aria-hidden="true"></div>
     <h2>Descripción</h2>
     <p class="task-description">{{ task.description }}</p>
+    {% if task.is_guided %}<p class="task-description">Puedes preguntar cuando lo necesites. Tu docente puede ver esta conversación y tu progreso.</p>{% endif %}
+    {% if progress %}<p role="status" class="task-description">{{ "Actividad completada" if progress.completed else "En progreso" }} · {{ progress.completed_count }}/{{ progress.total_exercises }}</p>{% endif %}
     <h2>Enunciado</h2>
     <div class="task-statement">{{ task.statement }}</div>
   </section>
@@ -55,7 +57,8 @@
       {% endfor %}
     </div>
 
-    <form class="task-composer" action="/student/tasks/{{ task.id }}/messages" method="post" data-task-composer>
+    <span id="chat-end"></span>
+    <form class="task-composer" action="/student/tasks/{{ task.id }}/messages#chat-end" method="post" data-task-composer{% if task.is_guided %} data-guided-task="{{ task.id }}"{% endif %}>
       <input type="hidden" name="request_id" value="{{ request_id }}">
       <label class="sr-only" for="task-message">Pregunta sobre la tarea</label>
       <textarea id="task-message" name="message" rows="2" maxlength="{{ max_message_length }}"

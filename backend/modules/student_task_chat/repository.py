@@ -9,6 +9,7 @@ TASK_SQL = """SELECT DISTINCT task.id,
                      COALESCE(NULLIF(btrim(task.titulo), ''), 'Tarea sin titulo') AS title,
                      COALESCE(task.descripcion, '') AS description,
                      COALESCE(task.descripcion, '') AS statement,
+                     EXISTS (SELECT 1 FROM public.ll_teacher_task_plans AS plan WHERE plan.task_id = task.id) AS is_guided,
                      'materia-' || m.id AS subject_slug, m.nombre AS subject_name
               FROM public.ll_user_estudiante AS link
               JOIN public.inscritos AS ins ON ins.id_estudiante = link.estudiante_id
@@ -45,13 +46,13 @@ def load_workspace(url: str, user_id: int, task_id: int) -> dict[str, object] | 
         messages: list[dict[str, object]] = []
         if conversation:
             cursor.execute(
-                """SELECT id, role, message_kind, status, content, created_at
+                """SELECT id, role, message_kind, status, content, created_at, reply_to_message_id, message_order, client_request_id
                    FROM public.ll_task_messages
                    WHERE conversation_id = %s
-                   ORDER BY created_at, id""",
+                   ORDER BY created_at, message_order""",
                 (conversation["id"],),
             )
-            messages = cursor.fetchall()
+            messages = order_messages(cursor.fetchall())
         return {"task": task, "conversation": conversation, "messages": messages}
 
 
@@ -204,7 +205,7 @@ def generation_history(url: str, conversation_id: UUID, exclude_id: UUID) -> lis
             """SELECT role, content FROM public.ll_task_messages
                WHERE conversation_id = %s AND id <> %s
                  AND (role = 'assistant' OR status = 'answered')
-               ORDER BY created_at DESC, id DESC LIMIT 12""",
+               ORDER BY created_at DESC, message_order DESC LIMIT 12""",
             (conversation_id, exclude_id),
         )
         return list(reversed(cursor.fetchall()))
@@ -232,3 +233,23 @@ def fail_question(url: str, message_id: UUID) -> None:
             "UPDATE public.ll_task_messages SET status = 'failed' WHERE id = %s",
             (message_id,),
         )
+
+
+def order_messages(messages):
+    """Orden lógico: inicio primero y cada réplica junto a su pregunta, también en historial antiguo."""
+    rows = sorted(messages, key=lambda m: (m["created_at"], m["message_order"]))
+    replies = {m["reply_to_message_id"]: m for m in rows if m.get("reply_to_message_id")}
+    ids = {m["id"] for m in rows}
+    roots = [
+        m for m in rows if not m.get("reply_to_message_id") or m["reply_to_message_id"] not in ids
+    ]
+    roots.sort(key=lambda m: m.get("message_kind") != "initial")
+    result = []
+    seen = set()
+    for root in roots + rows:
+        row = root
+        while row and row["id"] not in seen:
+            result.append(row)
+            seen.add(row["id"])
+            row = replies.get(row["id"])
+    return result

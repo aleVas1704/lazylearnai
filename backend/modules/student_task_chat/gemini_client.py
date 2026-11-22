@@ -14,14 +14,22 @@ class GeminiUnavailable(Exception):
     pass
 
 
-def generate(contents: list[types.Content], system_instruction: str) -> str:
+def generate(
+    contents: list[types.Content],
+    system_instruction: str,
+    *,
+    timeout_ms: int = 30000,
+    max_tokens: int = 1200,
+) -> str:
     key = gemini_api_key()
     if not key:
         raise GeminiNotConfigured()
     try:
         with genai.Client(
             api_key=key,
-            http_options=types.HttpOptions(timeout=30_000),
+            http_options=types.HttpOptions(
+                timeout=timeout_ms, retry_options=types.HttpRetryOptions(attempts=1)
+            ),
         ) as client:
             response = client.models.generate_content(
                 model=gemini_model(),
@@ -29,7 +37,7 @@ def generate(contents: list[types.Content], system_instruction: str) -> str:
                 config=types.GenerateContentConfig(
                     system_instruction=system_instruction,
                     temperature=0.25,
-                    max_output_tokens=1200,
+                    max_output_tokens=max_tokens,
                 ),
             )
         text = (response.text or "").strip()
@@ -37,4 +45,4 @@ def generate(contents: list[types.Content], system_instruction: str) -> str:
         raise GeminiUnavailable() from error
     if not text:
         raise GeminiUnavailable()
-    return text[:4000]
+    return text[:4000].replace("**", "")

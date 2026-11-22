@@ -3,8 +3,9 @@
 from datetime import datetime
 from uuid import uuid4
 
-import psycopg
 from psycopg.rows import dict_row
+
+from backend.core.database import connect
 
 
 class AccountRevoked(Exception):
@@ -21,7 +22,12 @@ _STUDENT_ROLE = """EXISTS (
 def lookup_student_account(url: str, name: str) -> dict[str, object] | None:
     """Buscar exactamente una cuenta con rol Estudiante."""
     with (
-        psycopg.connect(url, connect_timeout=5, row_factory=dict_row) as connection,
+        connect(
+            url,
+            label="student.auth.lookup_student_account",
+            connect_timeout=5,
+            row_factory=dict_row,
+        ) as connection,
         connection.cursor() as cursor,
     ):
         cursor.execute("SET LOCAL statement_timeout = '5s'")
@@ -48,7 +54,12 @@ def save_access_for_neon_user(
     previous_token_hash: str | None,
 ) -> None:
     """Crear cookie de sesion ligada directamente a usuario.id oficial."""
-    with psycopg.connect(url, connect_timeout=5) as connection, connection.cursor() as cursor:
+    with (
+        connect(
+            url, label="student.auth.save_access_for_neon_user", connect_timeout=5
+        ) as connection,
+        connection.cursor() as cursor,
+    ):
         cursor.execute("SET LOCAL statement_timeout = '5s'")
         cursor.execute(
             f"""SELECT usr.id FROM public.usuario AS usr
@@ -72,7 +83,10 @@ def save_access_for_neon_user(
 
 
 def session_profile(url: str, token_hash: str) -> tuple[int, str] | None:
-    with psycopg.connect(url, connect_timeout=5) as connection, connection.cursor() as cursor:
+    with (
+        connect(url, label="student.auth.session_profile", connect_timeout=5) as connection,
+        connection.cursor() as cursor,
+    ):
         cursor.execute("SET LOCAL statement_timeout = '5s'")
         cursor.execute(
             f"""SELECT usr.id, usr.name
@@ -86,7 +100,10 @@ def session_profile(url: str, token_hash: str) -> tuple[int, str] | None:
 
 
 def revoke_session(url: str, token_hash: str) -> None:
-    with psycopg.connect(url, connect_timeout=5) as connection, connection.cursor() as cursor:
+    with (
+        connect(url, label="student.auth.revoke_session", connect_timeout=5) as connection,
+        connection.cursor() as cursor,
+    ):
         cursor.execute("SET LOCAL statement_timeout = '5s'")
         cursor.execute(
             "DELETE FROM public.ll_student_sessions WHERE token_hash = %s",

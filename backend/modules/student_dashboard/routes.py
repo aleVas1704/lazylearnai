@@ -4,6 +4,7 @@ from fastapi import APIRouter, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from starlette.concurrency import run_in_threadpool
 
+from backend.core.timing import render_template
 from backend.modules.student_access import service as access_service
 from backend.modules.student_access.http import (
     COOKIE_NAME,
@@ -30,7 +31,9 @@ async def dashboard(
     subject: str | None = Query(default=None, max_length=64, pattern=r"^[a-z0-9-]+$"),
 ) -> Response:
     try:
-        session = await current_session(request)
+        session, data = await run_in_threadpool(
+            service.load_authenticated_dashboard, request.cookies.get(COOKIE_NAME), subject
+        )
     except access_service.AccessUnavailable:
         return Response(
             "El panel no está disponible. Inténtalo más tarde.",
@@ -39,10 +42,9 @@ async def dashboard(
         )
     if session is None:
         return login_redirect()
-    try:
-        data = await run_in_threadpool(service.load_dashboard, session.user_id, subject)
-    except service.DashboardUnavailable:
-        return request.app.state.templates.TemplateResponse(
+    if data is None:
+        return render_template(
+            request.app.state.templates,
             request=request,
             name="pages/student_dashboard.html",
             context={
@@ -56,7 +58,8 @@ async def dashboard(
             status_code=503,
             headers=PRIVATE_HEADERS,
         )
-    return request.app.state.templates.TemplateResponse(
+    return render_template(
+        request.app.state.templates,
         request=request,
         name="pages/student_dashboard.html",
         context={

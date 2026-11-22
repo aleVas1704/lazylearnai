@@ -7,6 +7,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from starlette.concurrency import run_in_threadpool
 
+from backend.core.timing import render_template
 from backend.modules.student_access import service
 from backend.modules.student_access.http import (
     COOKIE_NAME,
@@ -24,7 +25,8 @@ def login_page(
     errors: dict[str, str] | None = None,
     message: str | None = None,
 ) -> HTMLResponse:
-    return request.app.state.templates.TemplateResponse(
+    return render_template(
+        request.app.state.templates,
         request=request,
         name="pages/student_login.html",
         context={"title": "Acceso de estudiante", "errors": errors or {}, "message": message},

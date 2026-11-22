@@ -31,7 +31,7 @@ def request_is_same_origin(request: Request) -> bool:
         return origin == expected or (origin == "null" and fetch_site == "same-origin")
     referer = request.headers.get("referer")
     if not referer:
-        return True
+        return fetch_site == "same-origin"
     try:
         parsed = urlsplit(referer)
     except ValueError:

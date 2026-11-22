@@ -3,10 +3,12 @@
 from urllib.parse import parse_qs
 from uuid import UUID, uuid4
 
+import psycopg
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from starlette.concurrency import run_in_threadpool
 
+from backend.modules.guided_math import service as guided_math
 from backend.modules.student_access import service as access_service
 from backend.modules.student_access.http import COOKIE_NAME, PRIVATE_HEADERS, request_is_same_origin
 from backend.modules.student_task_chat import service
@@ -34,9 +36,27 @@ async def _workspace_page(
 ) -> Response:
     try:
         workspace = await run_in_threadpool(service.load_workspace, user_id, task_id)
+        progress = None
+        if workspace.task.get("is_guided"):
+            progress = await run_in_threadpool(guided_math.progress_for_student, user_id, task_id)
+        pending = next(
+            (
+                m
+                for m in workspace.messages
+                if m.get("status") == "pending" and m.get("role") == "student"
+            ),
+            None,
+        )
+        if pending and not draft:
+            draft = pending["content"]
+            request_id = pending["client_request_id"]
+            error = (
+                error
+                or "Tu pregunta está pendiente. Si la respuesta no aparece, reenvíala tras unos segundos."
+            )
     except service.TaskNotFound:
         return Response("Tarea no disponible.", status_code=404, headers=PRIVATE_HEADERS)
-    except service.WorkspaceUnavailable:
+    except (service.WorkspaceUnavailable, psycopg.Error):
         return Response(
             "Las tareas no están disponibles. Inténtalo más tarde.",
             status_code=503,
@@ -50,6 +70,7 @@ async def _workspace_page(
             "task": workspace.task,
             "conversation": workspace.conversation,
             "messages": workspace.messages,
+            "progress": progress,
             "error": error,
             "draft": draft,
             "request_id": request_id or uuid4(),
@@ -73,7 +94,14 @@ async def start_task(request: Request, task_id: int) -> Response:
     if session is None:
         return _login_redirect()
     try:
-        await run_in_threadpool(service.start_task, session.user_id, task_id)
+        if await run_in_threadpool(guided_math.is_guided_task, session.user_id, task_id):
+            await run_in_threadpool(guided_math.start_task, session.user_id, task_id)
+        else:
+            await run_in_threadpool(service.start_task, session.user_id, task_id)
+    except guided_math.InvalidMessage:
+        return Response("Tarea no disponible.", status_code=404, headers=PRIVATE_HEADERS)
+    except psycopg.Error:
+        return Response("Tarea no disponible.", status_code=503, headers=PRIVATE_HEADERS)
     except service.TaskNotFound:
         return Response("Tarea no disponible.", status_code=404, headers=PRIVATE_HEADERS)
     except service.WorkspaceUnavailable:
@@ -86,7 +114,7 @@ async def start_task(request: Request, task_id: int) -> Response:
             session.user_id,
             task_id,
             status_code=200,
-            error="El tutor no pudo iniciar la explicacion. Comprueba GEMINI_API_KEY y reintenta.",
+            error="El tutor no pudo iniciar la explicación. Inténtalo de nuevo.",
         )
     return RedirectResponse(f"/student/tasks/{task_id}", status_code=303, headers=PRIVATE_HEADERS)
 
@@ -136,13 +164,36 @@ async def send_message(request: Request, task_id: int) -> Response:
     if session is None:
         return _login_redirect()
     try:
-        await run_in_threadpool(
-            service.ask_question,
+        if await run_in_threadpool(guided_math.is_guided_task, session.user_id, task_id):
+            await run_in_threadpool(
+                guided_math.send_message, session.user_id, task_id, request_id, message
+            )
+        else:
+            await run_in_threadpool(
+                service.ask_question, session.user_id, task_id, request_id, message
+            )
+    except (guided_math.InvalidMessage, guided_math.NotStarted):
+        return await _workspace_page(
+            request,
             session.user_id,
             task_id,
-            request_id,
-            message,
+            status_code=422,
+            error="No se pudo procesar la respuesta. Inicia la tarea e intenta otra vez.",
+            draft=message,
+            request_id=request_id,
         )
+    except guided_math.TooManyMessages:
+        return await _workspace_page(
+            request,
+            session.user_id,
+            task_id,
+            status_code=429,
+            error="Espera un momento antes de enviar más mensajes.",
+            draft=message,
+            request_id=request_id,
+        )
+    except psycopg.Error:
+        return Response("Tutor no disponible.", status_code=503, headers=PRIVATE_HEADERS)
     except service.InvalidQuestion:
         return await _workspace_page(
             request,

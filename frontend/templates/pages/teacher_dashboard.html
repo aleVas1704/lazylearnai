@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panel docente · LazyLearnAI</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='css/teacher-portal.css') }}">
+  <script src="{{ url_for('static', path='js/teacher-portal.js') }}" defer></script>
+</head>
+<body class="teacher-app">
+  <aside class="teacher-sidebar">
+    <div class="teacher-logo"><h1>LazyLearn<span>AI</span></h1><p>Panel docente · Matemáticas</p></div>
+    <nav class="teacher-nav" aria-label="Secciones del docente">
+      <button type="button" class="teacher-tab is-active" data-teacher-tab="clases">👥 Gestión de clases</button>
+      <button type="button" class="teacher-tab" data-teacher-tab="tareas">📝 Asignar tareas</button>
+      <button type="button" class="teacher-tab" data-teacher-tab="reportes">📊 Reportes de tareas</button>
+    </nav>
+    <div class="teacher-profile">
+      <strong>{{ teacher.display_name }}</strong><small>Docente verificado</small>
+      <form action="/teacher/logout" method="post"><button type="submit" class="teacher-logout">Cerrar sesión</button></form>
+    </div>
+  </aside>
+  <main class="teacher-main">
+    <section class="teacher-section" data-teacher-section="clases">
+      <header class="teacher-heading"><p class="eyebrow">Organización</p><h2>Gestión de clases y alumnos</h2><p>Tus clases y estudiantes inscritos.</p></header>
+      <div class="teacher-columns">
+        <article class="teacher-card">
+          <h3>Tus grupos activos</h3>
+          {% if classes %}
+            {% for group in classes %}
+            <div class="teacher-group">
+              <div><strong>{{ group.label }}</strong><small>{{ group.student_count }} estudiante(s) inscrito(s)</small></div>
+              <button type="button" class="teacher-small-button" data-choose-class="{{ group.key }}">Asignar tarea</button>
+            </div>
+            {% endfor %}
+          {% else %}
+            <p>Todavía no tienes clases asignadas. Pide al administrador que te asigne una.</p>
+          {% endif %}
+        </article>
+        <article class="teacher-card teacher-card-muted">
+          <h3>Tus clases</h3>
+          <p>Puedes publicar actividades para tus clases y acompañar el progreso de tus estudiantes.</p>
+          <p class="teacher-note">Si falta una clase o un estudiante, solicita al administrador que revise su inscripción.</p>
+        </article>
+      </div>
+    </section>
+    <section class="teacher-section" data-teacher-section="tareas" hidden>
+      <header class="teacher-heading"><p class="eyebrow">Tutor de Matemáticas</p><h2>Nueva tarea</h2><p>Sube un documento o imagen, describe qué quieres evaluar y revisa los 10 ejercicios antes de publicarlos.</p></header>
+      <div class="teacher-columns">
+        <article class="teacher-card">
+          <form id="teacher-generate-form">
+            <label for="teacher-class">Grupo de destino</label>
+            <select id="teacher-class" name="group_key" required>
+              <option value="">Selecciona una clase</option>
+              {% for group in classes %}{% if "mat" in group.materia|lower %}<option value="{{ group.key }}">{{ group.label }}</option>{% endif %}{% endfor %}
+            </select>
+            <fieldset>
+              <legend>Actividad breve de MCM</legend>
+              <label for="mcm-a">Primer número</label><input id="mcm-a" type="number" min="1" max="100" value="4">
+              <label for="mcm-b">Segundo número</label><input id="mcm-b" type="number" min="1" max="100" value="6">
+              <button type="button" class="teacher-small-button" id="teacher-mcm-draft">Preparar MCM sin IA</button>
+            </fieldset>
+            <label for="teacher-instructions">Instrucciones para la IA</label>
+            <textarea id="teacher-instructions" rows="5" maxlength="2000" required placeholder="Crea 10 ejercicios de suma y resta de fracciones heterogéneas para 1ro de secundaria. Empieza con 3/4 + 1/6.">Crea 10 ejercicios de suma y resta de fracciones heterogéneas para 1ro de secundaria. El ejercicio 1 debe ser 3/4 + 1/6. Guía al alumno paso a paso sin dar la respuesta final.</textarea>
+            <label for="teacher-material">Material opcional (PDF, PNG o JPG · hasta 3 MB)</label>
+            <input id="teacher-material" type="file" accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg">
+            <p class="teacher-note">El archivo se envía a Gemini para generar el borrador; LazyLearnAI no guarda el archivo.</p>
+            <button type="submit" class="teacher-primary" id="teacher-generate-button">Generar borrador con IA</button>
+          </form>
+          <p class="teacher-status" id="teacher-generate-status" role="status" aria-live="polite"></p>
+        </article>
+        <article class="teacher-card" id="teacher-preview-card" hidden>
+          <h3>Vista previa · revisión docente</h3>
+          <p>El modelo puede cometer errores: revisa las fracciones antes de publicar.</p>
+          <label for="teacher-draft-title">Título</label>
+          <input id="teacher-draft-title" maxlength="120">
+          <label for="teacher-draft-description">Descripción para el estudiante</label>
+          <textarea id="teacher-draft-description" maxlength="2000" rows="3"></textarea>
+          <ol id="teacher-draft-exercises" class="teacher-exercises"></ol>
+          <button type="button" class="teacher-primary" id="teacher-publish-button">Publicar esta tarea</button>
+          <p class="teacher-status" id="teacher-publish-status" role="status" aria-live="polite"></p>
+        </article>
+      </div>
+      <div class="teacher-card teacher-recent">
+        <h3>Tareas publicadas desde el panel</h3><a href="/teacher/dashboard">Actualizar tareas y reportes</a>
+        {% if tasks %}
+          {% for task in tasks %}<p><strong>#{{ task.id }} — {{ task.title }}</strong><span class="teacher-soft"> · {{ task.materia }} · {{ task.started }} intento(s) iniciados</span></p>{% endfor %}
+        {% else %}<p>Publica tu primera tarea y aparecerá aquí.</p>{% endif %}
+      </div>
+    </section>
+    <section class="teacher-section" data-teacher-section="reportes" hidden>
+      <header class="teacher-heading"><p class="eyebrow">Progreso de estudiantes</p><h2>Reportes de tareas</h2><p>Revisa el progreso, los mensajes y las señales registradas durante la interacción.</p></header>
+      <div class="teacher-card">
+        <p class="teacher-note">Un pegado o cambio de pestaña <strong>no demuestra trampa</strong>. La duración es el tiempo entre eventos observados, no una medición exacta de atención. No utilices estas señales para sancionar automáticamente.</p>
+        <div class="teacher-table-scroll">
+          <table><thead><tr><th>Alumno</th><th>Tarea</th><th>Progreso</th><th>Actividad registrada</th><th>Acciones</th></tr></thead>
+          <tbody>
+          {% for r in reports %}
+            <tr><td><strong>{{ r.student_name }}</strong><small>Tiempo observado entre eventos: {{ r.minutes_observed }} min</small></td>
+              <td>{{ r.title }}</td>
+              <td>{% if r.completed %}<span class="teacher-chip green">Completada {{ r.completed_count }}/{{ r.total_exercises }}</span>{% else %}En progreso · {{ r.completed_count }}/{{ r.total_exercises }}{% endif %}<small>{{ r.messages }} mensajes · {{ "MCM" if r.task_type == "mcm" else "Fracciones" }}</small></td>
+              <td><span class="teacher-chip">{{ r.pasted }} pegados</span><span class="teacher-chip">{{ r.answer_requests }} pedidos de respuesta</span><span class="teacher-chip">{{ r.tab_hidden }} salidas de pestaña</span></td>
+              <td><button type="button" class="teacher-small-button" data-report-task="{{ r.task_id }}" data-report-student="{{ r.user_id }}">Ver chat</button></td></tr>
+          {% else %}
+            <tr><td colspan="5">Todavía no hay estudiantes que hayan iniciado una tarea creada desde este panel.</td></tr>
+          {% endfor %}
+          </tbody></table>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="teacher-report-modal" class="teacher-overlay" role="dialog" aria-modal="true" aria-labelledby="teacher-modal-title" hidden>
+    <div class="teacher-modal">
+      <div class="teacher-modal-head"><div><h2 id="teacher-modal-title">Historial de aprendizaje</h2><p id="teacher-modal-subtitle"></p></div><button type="button" id="teacher-modal-close" aria-label="Cerrar historial">✕</button></div>
+      <div class="teacher-modal-scroll"><div id="teacher-report-events"></div><div id="teacher-chat-history"></div><div class="teacher-summary"><h3>Resumen pedagógico de IA (orientativo)</h3><p class="teacher-note">Al generarlo se envían fragmentos de respuestas del estudiante a Gemini. Úsalo solo con el consentimiento y autorización correspondientes.</p><p id="teacher-summary-text">Solicita un resumen para observar patrones de aprendizaje sin emitir juicios sobre honestidad.</p><button class="teacher-small-button" id="teacher-summary-button" type="button">Generar resumen con Gemini</button></div></div>
+    </div>
+  </div>
+</body>
+</html>
