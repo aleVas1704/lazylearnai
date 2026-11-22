@@ -1,7 +1,8 @@
 """Consultas exclusivas del catalogo academico oficial de Neon."""
 
-import psycopg
 from psycopg.rows import dict_row
+
+from backend.core.database import connect
 
 
 # Una misma conexion para materias y tareas: evita viajes adicionales a Neon.
@@ -9,7 +10,9 @@ def load_dashboard(
     url: str, user_id: int, selected_slug: str | None
 ) -> tuple[list, dict | None, list]:
     with (
-        psycopg.connect(url, connect_timeout=5, row_factory=dict_row) as connection,
+        connect(
+            url, label="student.dashboard.load_dashboard", connect_timeout=5, row_factory=dict_row
+        ) as connection,
         connection.cursor() as cursor,
     ):
         cursor.execute("SET LOCAL statement_timeout = '5s'")
@@ -57,7 +60,10 @@ def load_dashboard(
 
 
 def task_is_available(url: str, user_id: int, task_id: int) -> bool:
-    with psycopg.connect(url, connect_timeout=5) as connection, connection.cursor() as cursor:
+    with (
+        connect(url, label="student.dashboard.task_is_available", connect_timeout=5) as connection,
+        connection.cursor() as cursor,
+    ):
         cursor.execute("SET LOCAL statement_timeout = '5s'")
         cursor.execute(
             """SELECT 1

@@ -15,6 +15,8 @@ from datetime import UTC, datetime, timedelta
 import psycopg
 
 from backend.core.config import database_url
+from backend.core.database import reuse_connections
+from backend.core.timing import timed
 from backend.modules.student_access import repository
 
 SESSION_SECONDS = 8 * 60 * 60
@@ -58,6 +60,7 @@ def hash_session(token: str | None) -> str | None:
     return hashlib.sha256(token.encode("ascii")).hexdigest()
 
 
+@timed("auth.password_verify")
 def verify_password(password: str, stored: str, *, allow_legacy_plaintext: bool) -> bool:
     """Verifica PBKDF2 (cuentas nuevas) o, SOLO local, credenciales heredadas.
 
@@ -86,6 +89,8 @@ def verify_password(password: str, stored: str, *, allow_legacy_plaintext: bool)
     return False
 
 
+@timed("student.authentication")
+@reuse_connections
 def create_access(
     name: str,
     password: str,
@@ -136,6 +141,7 @@ def has_session(token: str | None) -> bool:
         raise AccessUnavailable() from None
 
 
+@timed("student.session")
 def get_session(token: str | None) -> StudentSession | None:
     token_hash = hash_session(token)
     if token_hash is None:

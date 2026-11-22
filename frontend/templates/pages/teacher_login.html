@@ -1,0 +1,19 @@
+{% extends "student_access_base.html" %}
+{% block access_content %}
+<form class="ll-card access-card" action="/teacher/access" method="post" aria-label="Acceso del docente">
+  <h2 style="margin-top:0;text-align:center">Acceso docente</h2>
+  {% if message %}<p class="access-error access-alert" role="alert">{{ message }}</p>{% endif %}
+  <div class="access-field">
+    <label for="teacher-name">Nombre de usuario</label>
+    <input id="teacher-name" name="name" type="text" autocomplete="username" maxlength="80" required>
+  </div>
+  <div class="access-field">
+    <label for="teacher-password">Contraseña</label>
+    <input id="teacher-password" name="password" type="password" autocomplete="current-password" maxlength="256" required>
+  </div>
+  <div class="access-button-frame">
+    <button class="ll-button access-submit" type="submit">Entrar como docente</button>
+  </div>
+  <p style="margin:22px 0 0;text-align:center"><a href="/">Volver al acceso de estudiantes</a></p>
+</form>
+{% endblock %}

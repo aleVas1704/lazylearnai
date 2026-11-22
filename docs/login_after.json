@@ -1,0 +1,25 @@
+{
+  "mode": "offline synthetic latency; NOT Neon measurements",
+  "costs_ms": {
+    "connect": 5,
+    "statement": 2,
+    "transaction_end": 1
+  },
+  "samples": 7,
+  "student": {
+    "median_ms": 152.63,
+    "min_ms": 149.75,
+    "max_ms": 188.69,
+    "connections": 2,
+    "statements": 10,
+    "transactions": 4
+  },
+  "teacher_6_classes": {
+    "median_ms": 150.25,
+    "min_ms": 146.63,
+    "max_ms": 223.81,
+    "connections": 3,
+    "statements": 6,
+    "transactions": 5
+  }
+}
