@@ -54,12 +54,6 @@
               <option value="">Selecciona una clase</option>
               {% for group in classes %}{% if "mat" in group.materia|lower %}<option value="{{ group.key }}">{{ group.label }}</option>{% endif %}{% endfor %}
             </select>
-            <fieldset>
-              <legend>Actividad breve de MCM</legend>
-              <label for="mcm-a">Primer número</label><input id="mcm-a" type="number" min="1" max="100" value="4">
-              <label for="mcm-b">Segundo número</label><input id="mcm-b" type="number" min="1" max="100" value="6">
-              <button type="button" class="teacher-small-button" id="teacher-mcm-draft">Preparar MCM sin IA</button>
-            </fieldset>
             <label for="teacher-instructions">Instrucciones para la IA</label>
             <textarea id="teacher-instructions" rows="5" maxlength="2000" required placeholder="Crea 10 ejercicios de suma y resta de fracciones heterogéneas para 1ro de secundaria. Empieza con 3/4 + 1/6.">Crea 10 ejercicios de suma y resta de fracciones heterogéneas para 1ro de secundaria. El ejercicio 1 debe ser 3/4 + 1/6. Guía al alumno paso a paso sin dar la respuesta final.</textarea>
             <label for="teacher-material">Material opcional (PDF, PNG o JPG · hasta 3 MB)</label>

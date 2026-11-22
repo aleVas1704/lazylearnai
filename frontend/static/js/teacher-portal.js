@@ -43,26 +43,6 @@
   let currentGroup = null;
   let currentFileName = null;
   let publicationId = null;
-  get("teacher-mcm-draft").addEventListener("click", () => {
-    const a = Number(get("mcm-a").value), b = Number(get("mcm-b").value);
-    const group = get("teacher-class").value;
-    if (!group || ![a, b].every(n => Number.isInteger(n) && n >= 1 && n <= 100)) {
-      return status("teacher-generate-status", "Elige tu clase y dos enteros entre 1 y 100.", true);
-    }
-    preview = { task_type: "mcm", exercises: [{a, b}] };
-    publicationId = crypto.randomUUID();
-    currentGroup = group;
-    currentFileName = null;
-    get("teacher-draft-title").value = `Mínimo común múltiplo de ${a} y ${b}`;
-    get("teacher-draft-description").value = "Encuentra el mínimo común múltiplo. Puedes preguntar cuando lo necesites.";
-    const li = document.createElement("li");
-    li.textContent = `¿Cuál es el MCM de ${a} y ${b}?`;
-    get("teacher-draft-exercises").replaceChildren(li);
-    get("teacher-preview-card").hidden = false;
-    get("teacher-publish-button").disabled = false;
-    status("teacher-generate-status", "Revisa la actividad antes de publicarla.");
-  });
-
   get("teacher-generate-form").addEventListener("submit", async (ev) => {
     ev.preventDefault();
     const group_key = get("teacher-class").value;
